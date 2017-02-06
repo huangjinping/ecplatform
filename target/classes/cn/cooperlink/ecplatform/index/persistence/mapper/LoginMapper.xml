@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.index.persistence.mapper.LoginMapper" >
+
+  <!-- 登陆认证信息 -->
+  <resultMap id="securityAuthentication" type="cn.cooperlink.ecplatform.security.Authentication">
+  	<id column="U_ID" property="userId" jdbcType="BIGINT" />
+  	<result column="U_USERNAME" property="username" jdbcType="VARCHAR"/>
+  	<result column="O_ID" property="orgId" jdbcType="BIGINT"/>
+  	<result column="O_SHORT_NAME" property="orgName" jdbcType="VARCHAR"/>
+  	<result column="O_ID_FULLPATH" property="orgIdFullpath" jdbcType="VARCHAR"/>
+  	<result column="O_NAME_FULLPATH" property="orgNameFullpath" jdbcType="VARCHAR"/>
+  	<result column="U_EMPLOYEE_NO" property="employeeNo" jdbcType="VARCHAR"/>
+  	<result column="U_NAME" property="name" jdbcType="VARCHAR"/>
+  	<result column="U_SEX" property="sex" jdbcType="INTEGER"/>
+  	<result column="U_QQ" property="qq" jdbcType="VARCHAR"/>
+  	<result column="U_E_MAIL" property="email" jdbcType="VARCHAR"/>
+  	<result column="U_PHOTO" property="photo" jdbcType="VARCHAR"/>
+  	<result column="U_USER_TYPE" property="userType" jdbcType="INTEGER"/>
+  	<result column="U_TENANT_ID" property="tenantId" jdbcType="BIGINT"/>
+  	<collection property="permissionList" ofType="cn.cooperlink.ecplatform.security.Permission">
+		<id column="F_ID" property="id"/>
+		<result column="F_PARENT_ID" property="parentId"/>
+		<result column="F_FUNC_NAME" property="name"/>
+		<result column="F_FUNC_CODE" property="code"/>
+		<result column="F_URL" property="url"/>
+		<result column="F_ICON_CLS" property="iconCls"/>
+		<result column="F_ID_FULLPATH" property="funcIdFullpath"/>
+		<!-- 
+			<result column="F_NAME_FULLPATH" property="funcNameFullpath"/>
+			<result column="RF_ROLE_ID" property="roleId"/>
+		 -->
+	</collection>
+  </resultMap>
+  
+ <resultMap type="cn.cooperlink.ecplatform.security.mobile.MobileAuthenticationSub" id="subMemberResultMap">
+  <id column="MS_ID" property="mem_id" />
+  <result column="MS_NAME" property="name" jdbcType="VARCHAR" />
+  <result column="MS_MOBILE" property="mobile" jdbcType="VARCHAR" />
+  <result column="MS_GENDER" property="gender" jdbcType="BIT" />
+  <result column="MS_ISSUBMEMBER" property="isSubMember" jdbcType="BIT" />
+  <association property="parent_member" javaType="cn.cooperlink.ecplatform.security.mobile.MobileAuthentication">
+   <id property="mem_id" column="M_ID" />
+   <result property="name" column="M_NAME" />
+   <result property="mobile" column="M_MOBILE" />
+   <result property="phone" column="M_PHONE" />
+   <result property="email" column="M_EMAIL" />
+   <result property="gender" column="M_GENDER" />
+   <result property="id_card" column="M_ID_CARD" />
+   <result property="QQ" column="M_QQ" />
+   <result property="birthday" column="M_BIRTHDAY" />
+   <result property="nick_name" column="M_NICK_NAME" />
+   <result property="english_name" column="M_ENGLISH_NAME" />
+   <result property="job" column="M_JOB" />
+   <result property="address" column="M_ADDRESS" />
+   <result property="origin_place" column="M_ORIGIN_PLACE" />
+   <result property="job" column="M_JOB" />
+   <result property="photo" column="M_PHOTO" />
+   <result property="isSubMember" column="M_ISSUBMEMBER" />
+  </association>
+
+ </resultMap>
+  <resultMap type="cn.cooperlink.ecplatform.security.mobile.MobileAuthentication" id="memberResultMap">
+	  <id column="M_ID" property="mem_id" />
+	  <result column="M_NAME" property="name" jdbcType="VARCHAR" />
+	  <result column="M_MOBILE" property="mobile" jdbcType="VARCHAR" />
+	  <result column="M_PHONE" property="phone" jdbcType="VARCHAR" />
+	  <result column="M_EMAIL" property="email" jdbcType="VARCHAR" />
+	  <result column="M_ID_CARD" property="id_card" jdbcType="VARCHAR" />
+	  <result column="M_QQ" property="QQ" jdbcType="VARCHAR" />
+	  <result column="M_BIRTHDAY" property="birthday" jdbcType="TIMESTAMP" />
+	  <result column="M_NICK_NAME" property="nick_name" jdbcType="VARCHAR" />
+	  <result column="M_ENGLISH_NAME" property="english_name" jdbcType="VARCHAR" />
+	  <result column="M_JOB" property="job" jdbcType="VARCHAR" />
+	  <result column="M_ADDRESS" property="address" jdbcType="VARCHAR" />
+	  <result column="M_ORIGIN_PLACE" property="origin_place" jdbcType="VARCHAR" />
+	  <result column="M_PHOTO" property="photo" jdbcType="VARCHAR" />
+	  <result column="M_GENDER" property="gender" jdbcType="BIT" />
+	  <result column="M_ISSUBMEMBER" property="isSubMember" jdbcType="BIT" />
+	  <collection property="sub_members" ofType="cn.cooperlink.ecplatform.security.mobile.MobileAuthenticationSub">
+	    <id property="mem_id" column="MS_ID" />
+	    <result property="name" column="MS_NAME" />
+	    <result property="mobile" column="MS_MOBILE" />
+	    <result property="gender" column="MS_GENDER" />
+	  	<result property="isSubMember" column="MS_ISSUBMEMBER" />
+	  </collection>
+  </resultMap>
+  
+  <!-- 登陆 -->
+  <select id="loadAuthInfo4Normal" resultMap="securityAuthentication" parameterType="map" >
+  	SELECT * FROM
+  	(
+	    SELECT
+			U.ID AS U_ID,
+			U.USERNAME AS U_USERNAME,
+			O.ID AS O_ID,
+			O.SHORT_NAME AS O_SHORT_NAME,
+			O.ID_FULLPATH AS O_ID_FULLPATH,
+			O.NAME_FULLPATH AS O_NAME_FULLPATH,
+			U.EMPLOYEE_NO AS U_EMPLOYEE_NO,
+			U. NAME AS U_NAME,
+			U.SEX AS U_SEX,
+			U.QQ AS U_QQ,
+			U.E_MAIL U_E_MAIL,
+			U.PHOTO AS U_PHOTO,
+			U.USER_TYPE AS U_USER_TYPE,
+			U.TENANT_ID AS U_TENANT_ID
+		FROM
+			SYS_USER U,
+			SYS_ORG_USER OU,
+			SYS_ORG O
+		WHERE
+			U.ID = OU.USER_ID
+		AND OU.ORG_ID = O.ID
+		AND OU.IS_PRIMARY = 1
+		AND U.USERNAME = #{username, jdbcType=VARCHAR} 
+		AND U.PASSWORD = #{password, jdbcType=VARCHAR}
+	) AUTH,
+	(
+		SELECT
+			DISTINCT
+			F.ID AS F_ID,
+			F.PARENT_ID AS F_PARENT_ID,
+			F.FUNC_NAME AS F_FUNC_NAME,
+			F.FUNC_CODE AS F_FUNC_CODE,
+			F.URL AS F_URL,
+			F.ICON_CLS AS F_ICON_CLS,
+			F.ID_FULLPATH AS F_ID_FULLPATH,
+			F.NAME_FULLPATH AS F_NAME_FULLPATH,
+			RF.ROLE_ID AS RF_ROLE_ID,
+			UR.USER_ID AS UR_USER_ID
+		FROM
+			SYS_USER_ROLE UR,
+			SYS_ROLE_FUNC RF,
+			DICTIONARY_FUNCTION F,
+			TEN_SERVICE_PURCHASE SP
+		WHERE
+			UR.ROLE_ID = RF.ROLE_ID
+		AND RF.FUNC_ID = F.ID
+		AND F.VALIDITY = 1
+		AND F.TYPE = 3
+    	ORDER BY F.ORDER_FIELD ASC
+	) PER,
+	TEN_SERVICE_PURCHASE SP
+	WHERE AUTH.U_ID = PER.UR_USER_ID
+	AND AUTH.U_TENANT_ID = SP.TENANT_ID 
+	AND PER.F_ID = SP.FUNC_ID
+  </select>
+  
+  <select id="getUserTenantId" parameterType="string" resultType="java.lang.Long">
+  	SELECT 
+  		TENANT_ID
+  	FROM SYS_USER U 
+  	WHERE U.USERNAME= #{username, jdbcType=VARCHAR}
+  </select>
+  
+  <select id="loadAuthInfo4TenantAdmin" resultMap="securityAuthentication" parameterType="map">
+   	SELECT * FROM
+  	(
+	    SELECT
+			U.ID AS U_ID,
+			U.USERNAME AS U_USERNAME,
+			O.ID AS O_ID,
+			O.SHORT_NAME AS O_SHORT_NAME,
+			O.ID_FULLPATH AS O_ID_FULLPATH,
+			O.NAME_FULLPATH AS O_NAME_FULLPATH,
+			U.EMPLOYEE_NO AS U_EMPLOYEE_NO,
+			U. NAME AS U_NAME,
+			U.SEX AS U_SEX,
+			U.QQ AS U_QQ,
+			U.E_MAIL U_E_MAIL,
+			U.PHOTO AS U_PHOTO,
+			U.USER_TYPE AS U_USER_TYPE,
+			U.TENANT_ID AS U_TENANT_ID
+		FROM
+			SYS_USER U,
+			SYS_ORG_USER OU,
+			SYS_ORG O
+		WHERE
+			U.ID = OU.USER_ID
+		AND OU.ORG_ID = O.ID
+		AND OU.IS_PRIMARY = 1
+		AND U.USERNAME = #{username, jdbcType=VARCHAR} 
+		AND U.PASSWORD = #{password, jdbcType=VARCHAR}
+	) AUTH,
+	(
+		SELECT
+			DISTINCT
+			F.ID AS F_ID,
+			F.PARENT_ID AS F_PARENT_ID,
+			F.FUNC_NAME AS F_FUNC_NAME,
+			F.FUNC_CODE AS F_FUNC_CODE,
+			F.URL AS F_URL,
+			F.ICON_CLS AS F_ICON_CLS,
+			F.ID_FULLPATH AS F_ID_FULLPATH,
+			F.NAME_FULLPATH AS F_NAME_FULLPATH,
+			'' AS RF_ROLE_ID,
+			'' AS UR_USER_ID ,
+			'${username}' AS UR_USER_NAME 
+ 		FROM
+			DICTIONARY_FUNCTION F, TEN_SERVICE_PURCHASE SP
+		WHERE F.ID = SP.FUNC_ID
+		AND SP.TENANT_ID = #{tenantId, jdbcType=BIGINT}
+		<if test="menuIds != null">
+			AND F.ID IN (${menuIds})
+		</if>
+		AND F.VALIDITY = 1
+		AND F.TYPE = 3
+    	ORDER BY F.ORDER_FIELD ASC
+	) PER
+	WHERE AUTH.U_USERNAME = PER.UR_USER_NAME
+  </select>
+  
+  
+  <select id="loadAuthInfo4Superadmin" resultMap="securityAuthentication" parameterType="map">
+   	SELECT * FROM
+  	(
+	    SELECT
+			U.ID AS U_ID,
+			U.USERNAME AS U_USERNAME,
+			0 AS O_ID,
+			'' AS O_SHORT_NAME,
+			'/' AS O_ID_FULLPATH,
+			'/' AS O_NAME_FULLPATH,
+			U.EMPLOYEE_NO AS U_EMPLOYEE_NO,
+			U. NAME AS U_NAME,
+			U.SEX AS U_SEX,
+			U.QQ AS U_QQ,
+			U.E_MAIL U_E_MAIL,
+			U.PHOTO AS U_PHOTO,
+			U.USER_TYPE AS U_USER_TYPE,
+			U.TENANT_ID AS U_TENANT_ID
+		FROM
+			SYS_USER U
+		WHERE U.USERNAME = #{username, jdbcType=VARCHAR} 
+		AND U.PASSWORD = #{password, jdbcType=VARCHAR}
+	) AUTH,
+	(
+		SELECT
+			DISTINCT
+			F.ID AS F_ID,
+			F.PARENT_ID AS F_PARENT_ID,
+			F.FUNC_NAME AS F_FUNC_NAME,
+			F.FUNC_CODE AS F_FUNC_CODE,
+			F.URL AS F_URL,
+			F.ICON_CLS AS F_ICON_CLS,
+			F.ID_FULLPATH AS F_ID_FULLPATH,
+			F.NAME_FULLPATH AS F_NAME_FULLPATH,
+			'' AS RF_ROLE_ID,
+			'' AS UR_USER_ID ,
+			'${username}' AS UR_USER_NAME 
+ 		FROM
+			DICTIONARY_FUNCTION F
+		WHERE 1 = 1
+		<if test="menuIds != null">
+			AND F.ID IN (${menuIds})
+		</if>
+		AND F.VALIDITY = 1
+		AND F.TYPE = 3
+    	ORDER BY F.ORDER_FIELD ASC
+	) PER
+	WHERE AUTH.U_USERNAME = PER.UR_USER_NAME
+  </select>
+  
+  <!-- 主账号登录 -->
+  <select id="loadMobileAuthInfo" resultMap="memberResultMap"
+	 parameterType="map">
+	 SELECT
+	 m.ID as M_ID,
+	 m.NAME as M_NAME,
+	 m.MOBILE as M_MOBILE,
+	 m.PHONE as M_PHONE,
+	 m.EMAIL as M_EMAIL,
+	 m.GENDER as M_GENDER,
+	 m.ID_CARD as M_ID_CARD,
+	 m.QQ as M_QQ,
+	 m.BIRTHDAY as M_BIRTHDAY,
+	 m.NICK_NAME as M_NICK_NAME,
+	 m.ENGLISH_NAME as M_ENGLISH_NAME,
+	 m.JOB as M_JOB,
+	 m.ADDRESS as M_ADDRESS,
+	 m.ORIGIN_PLACE as M_ORIGIN_PLACE,
+	 m.PHOTO as M_PHOTO,
+	 0 as M_ISSUBMEMBER,
+	 ms.ID as MS_ID,
+	 ms.NAME as MS_NAME,
+	 ms.MOBILE as MS_MOBILE,
+	 ms.GENDER as MS_GENDER,
+	 1 as MS_ISSUBMEMBER
+	 FROM mem_member m
+	 LEFT JOIN mem_submember ms ON ms.P_MEM_ID=m.ID AND ms.ENABLE=1
+	 WHERE m.mobile=#{username} AND
+	 m.passwd=#{password} AND m.ENABLE=1
+  </select>
+	
+	<!-- 子账号登录 -->
+  <select id="loadMobileAuthInfo_SubMem" resultMap="subMemberResultMap" parameterType="map">
+	 SELECT
+	 ms.ID as MS_ID,
+	 ms.NAME as MS_NAME,
+	 ms.MOBILE as MS_MOBILE,
+	 ms.GENDER as MS_GENDER,
+	 m.ID as M_ID,
+	 m.NAME as M_NAME,
+	 m.MOBILE as M_MOBILE,
+	 m.PHONE as M_PHONE,
+	 m.EMAIL as M_EMAIL,
+	 m.GENDER as M_GENDER,
+	 m.ID_CARD as M_ID_CARD,
+	 m.QQ as M_QQ,
+	 m.BIRTHDAY as M_BIRTHDAY,
+	 m.NICK_NAME as M_NICK_NAME,
+	 m.ENGLISH_NAME as M_ENGLISH_NAME,
+	 m.JOB as M_JOB,
+	 m.ADDRESS as M_ADDRESS,
+	 m.ORIGIN_PLACE as M_ORIGIN_PLACE,
+	 m.PHOTO as M_PHOTO,
+	 0 as M_ISSUBMEMBER,
+	 1 as MS_ISSUBMEMBER
+	 FROM
+	 mem_submember ms,mem_member m
+	 WHERE
+	 ms.P_MEM_ID = m.ID
+	 AND
+	 ms.MOBILE=#{username}
+	 AND
+	 ms.PASSWD=#{password}
+	 AND
+	 ms.ENABLE=1
+	 AND
+	 m.ENABLE=1
+  </select>
+</mapper>

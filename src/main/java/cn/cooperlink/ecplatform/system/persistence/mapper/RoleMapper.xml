@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.system.persistence.mapper.RoleMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.system.entity.Role" >
+    <id column="R_ID" property="id" jdbcType="BIGINT" />
+    <result column="R_ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+    <result column="R_ROLE_CODE" property="roleCode" jdbcType="VARCHAR" />
+    <result column="R_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="R_ORG_ID" property="orgId" jdbcType="BIGINT" />
+    <result column="R_TENANT_ID" property="tenantId" jdbcType="BIGINT" />
+    <result column="R_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="R_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="R_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+    <result column="R_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    R.ID as R_ID, R.ROLE_NAME as R_ROLE_NAME, R.ROLE_CODE as R_ROLE_CODE, R.DESCRIPTION as R_DESCRIPTION, 
+    R.ORG_ID as R_ORG_ID, R.TENANT_ID as R_TENANT_ID, R.CREATE_BY as R_CREATE_BY, R.CREATE_TIME as R_CREATE_TIME, 
+    R.UPDATE_BY as R_UPDATE_BY, R.UPDATE_TIME as R_UPDATE_TIME
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.system.entity.Role" 
+  	useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO SYS_ROLE (ID, ROLE_NAME, ROLE_CODE, 
+      DESCRIPTION, ORG_ID, TENANT_ID, 
+      CREATE_BY, CREATE_TIME, UPDATE_BY, 
+      UPDATE_TIME)
+    VALUES (#{id,jdbcType=BIGINT}, #{roleName,jdbcType=VARCHAR}, #{roleCode,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{orgId,jdbcType=BIGINT}, #{tenantId,jdbcType=BIGINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM SYS_ROLE
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.system.entity.Role" >
+    UPDATE SYS_ROLE
+    <set >
+      <if test="roleName != null" >
+        ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleCode != null" >
+        ROLE_CODE = #{roleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        ORG_ID = #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="tenantId != null" >
+        TENANT_ID = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="cn.cooperlink.ecplatform.system.entity.Role" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM 
+    	SYS_ROLE R
+    WHERE R.ID = #{id,jdbcType=BIGINT}
+    AND R.TENANT_ID = #{tenantId, jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM 
+    	SYS_ROLE R
+    WHERE R.TENANT_ID = #{tenantId, jdbcType=BIGINT}
+  </select>
+  
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM 
+    	SYS_ROLE R
+    WHERE R.TENANT_ID = #{tenantId, jdbcType=BIGINT}
+    <if test="limit != null and start != null" >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER} 
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT 
+    	COUNT(1) 
+    FROM 
+    	SYS_ROLE R
+    WHERE R.TENANT_ID = #{tenantId, jdbcType=BIGINT}
+  </select>
+  
+  <select id="queryAllRoleByUser" parameterType="long" resultMap="BaseResultMap">
+  	SELECT 
+  		<include refid="Base_Column_List"/>,
+  		UR.ID userRoleId
+  	FROM 
+  		SYS_ROLE R
+  	LEFT JOIN
+  		SYS_USER_ROLE UR
+  	ON
+  		R.ID = UR.ROLE_ID
+  		AND R.TENANT_ID = #{tenantId, jdbcType=BIGINT}
+  		AND UR.USER_ID = #{userId, jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteUserRole" parameterType="long">
+  	DELETE FROM SYS_USER_ROLE
+  	WHERE USER_ID = #{userId, jdbcType=BIGINT}
+  </delete>
+  
+  <select id="checkUser" parameterType="map" resultType="int">
+  	SELECT 
+  		COUNT(*) 
+ 	FROM 
+ 		SYS_USER 
+	WHERE ID=#{userId, jdbcType=BIGINT} 
+	AND TENANT_ID=#{tenantId, jdbcType=BIGINT}
+  </select>
+  
+</mapper>

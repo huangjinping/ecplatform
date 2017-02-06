@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.system.persistence.mapper.RoleFuncMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.system.entity.RoleFunc" >
+    <id column="RF_ID" property="id" jdbcType="BIGINT" />
+    <result column="RF_ROLE_ID" property="roleId" jdbcType="BIGINT" />
+    <result column="RF_FUNC_ID" property="funcId" jdbcType="BIGINT" />
+    <result column="RF_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="RF_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="RF_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+    <result column="RF_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    RF.ID as RF_ID, RF.ROLE_ID as RF_ROLE_ID, RF.FUNC_ID as RF_FUNC_ID, RF.CREATE_BY as RF_CREATE_BY, 
+    RF.CREATE_TIME as RF_CREATE_TIME, RF.UPDATE_BY as RF_UPDATE_BY, RF.UPDATE_TIME as RF_UPDATE_TIME
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.system.entity.RoleFunc" >
+    INSERT INTO SYS_ROLE_FUNC (ID, ROLE_ID, FUNC_ID, 
+      CREATE_BY, CREATE_TIME, UPDATE_BY, 
+      UPDATE_TIME)
+    VALUES (#{id,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT}, #{funcId,jdbcType=BIGINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM SYS_ROLE_FUNC
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.system.entity.RoleFunc" >
+    UPDATE SYS_ROLE_FUNC
+    <set >
+      <if test="roleId != null" >
+        ROLE_ID = #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="funcId != null" >
+        FUNC_ID = #{funcId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM SYS_ROLE_FUNC RF
+    WHERE RF.ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM SYS_ROLE_FUNC RF
+  </select>
+  
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM SYS_ROLE_FUNC RF
+    <if test="limit != null and start != null" >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER} 
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT COUNT(1) FROM SYS_ROLE_FUNC RF
+  </select>
+  
+  <insert id="saveBatch" parameterType="java.util.List" >
+    INSERT INTO SYS_ROLE_FUNC (ID, ROLE_ID, FUNC_ID, 
+      CREATE_BY, CREATE_TIME, UPDATE_BY, 
+      UPDATE_TIME)
+    VALUES 
+    <foreach collection="list" separator="," item="item">
+      (#{item.id,jdbcType=BIGINT}, #{item.roleId,jdbcType=BIGINT}, #{item.funcId,jdbcType=BIGINT}, 
+      #{item.createBy,jdbcType=BIGINT}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateBy,jdbcType=BIGINT}, 
+      #{item.updateTime,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+  
+  <!-- 删除角色下所有授权 -->
+  <delete id="deleteByRoleId" parameterType="java.lang.Long" >
+    DELETE FROM SYS_ROLE_FUNC
+    WHERE ROLE_ID = #{roleId,jdbcType=BIGINT}
+  </delete>
+  
+  <select id="findFuncTreeByRole" parameterType="map"
+   	resultType="cn.cooperlink.ecplatform.tenant.persistence.result.AuthorizedFuncTree">
+  	SELECT 
+  		F.ID as id, F.PARENT_ID as parentId, F.FUNC_NAME as text, 
+  		F.ICON_CLS as iconCls, F.TYPE as type, SP.ID as purchasedId,
+  		RF.FUNC_ID as authorizedSvrId, F.ID_FULLPATH as funcIdFullpath
+  	FROM 
+  		TEN_SERVICE_PURCHASE SP, DICTIONARY_FUNCTION F, SYS_ROLE_FUNC RF
+  	WHERE
+  		SP.FUNC_ID = F.ID 
+ 	AND 
+ 		F.VALIDITY = 1 
+	AND 
+		SP.TENANT_ID = #{tenantId,jdbcType=BIGINT}
+  	AND 
+  		F.ID = RF.FUNC_ID 
+  	AND 
+  		RF.ROLE_ID = #{roleId, jdbcType=BIGINT}
+  	AND
+  		F.TYPE = 3
+	ORDER BY F.ORDER_FIELD ASC
+  </select>
+  
+</mapper>

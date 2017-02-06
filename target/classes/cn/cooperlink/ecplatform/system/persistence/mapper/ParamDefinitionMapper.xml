@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.system.persistence.mapper.ParamDefinitionMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.system.entity.ParamDefinition" >
+    <id column="PD_ID" property="id" jdbcType="BIGINT" />
+    <result column="PD_PARAM_NAME" property="paramName" jdbcType="VARCHAR" />
+    <result column="PD_PARAM_DISPLAY_NAME" property="paramDisplayName" jdbcType="VARCHAR" />
+    <result column="PD_VALUE_TYPE" property="valueType" jdbcType="VARCHAR" />
+    <result column="PD_PARAM_TYPE" property="paramType" jdbcType="INTEGER" />
+    <result column="PD_IS_EDITABLE" property="isEditable" jdbcType="INTEGER" />
+    <result column="PD_CACHE_TYPE" property="cacheType" jdbcType="INTEGER" />
+    <result column="PD_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="PD_VALIDITY" property="validity" jdbcType="INTEGER" />
+    <result column="PD_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="PD_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="PD_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+    <result column="PD_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    PD.ID as PD_ID, PD.PARAM_NAME as PD_PARAM_NAME, PD.PARAM_DISPLAY_NAME as PD_PARAM_DISPLAY_NAME, 
+    PD.VALUE_TYPE as PD_VALUE_TYPE, PD.PARAM_TYPE as PD_PARAM_TYPE, PD.IS_EDITABLE as PD_IS_EDITABLE, 
+    PD.CACHE_TYPE as PD_CACHE_TYPE, PD.DESCRIPTION as PD_DESCRIPTION, PD.VALIDITY as PD_VALIDITY, 
+    PD.CREATE_BY as PD_CREATE_BY, PD.CREATE_TIME as PD_CREATE_TIME, PD.UPDATE_BY as PD_UPDATE_BY, 
+    PD.UPDATE_TIME as PD_UPDATE_TIME
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.system.entity.ParamDefinition" >
+    INSERT INTO DICTIONARY_PARAM_DEFINITION (ID, PARAM_NAME, PARAM_DISPLAY_NAME, 
+      VALUE_TYPE, PARAM_TYPE, IS_EDITABLE, 
+      CACHE_TYPE, DESCRIPTION, VALIDITY, 
+      CREATE_BY, CREATE_TIME, UPDATE_BY, 
+      UPDATE_TIME)
+    VALUES (#{id,jdbcType=BIGINT}, #{paramName,jdbcType=VARCHAR}, #{paramDisplayName,jdbcType=VARCHAR}, 
+      #{valueType,jdbcType=VARCHAR}, #{paramType,jdbcType=INTEGER}, #{isEditable,jdbcType=INTEGER}, 
+      #{cacheType,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, #{validity,jdbcType=INTEGER}, 
+      #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM DICTIONARY_PARAM_DEFINITION
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.system.entity.ParamDefinition" >
+    UPDATE DICTIONARY_PARAM_DEFINITION
+    <set >
+      <if test="paramName != null" >
+        PARAM_NAME = #{paramName,jdbcType=VARCHAR},
+      </if>
+      <if test="paramDisplayName != null" >
+        PARAM_DISPLAY_NAME = #{paramDisplayName,jdbcType=VARCHAR},
+      </if>
+      <if test="valueType != null" >
+        VALUE_TYPE = #{valueType,jdbcType=VARCHAR},
+      </if>
+      <if test="paramType != null" >
+        PARAM_TYPE = #{paramType,jdbcType=INTEGER},
+      </if>
+      <if test="isEditable != null" >
+        IS_EDITABLE = #{isEditable,jdbcType=INTEGER},
+      </if>
+      <if test="cacheType != null" >
+        CACHE_TYPE = #{cacheType,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="validity != null" >
+        VALIDITY = #{validity,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM DICTIONARY_PARAM_DEFINITION PD
+    WHERE PD.ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM DICTIONARY_PARAM_DEFINITION PD
+  </select>
+  
+  <sql id="where"><!-- PARAM_DISPLAY_NAME -->
+  	<if test="qParam != null and qParam != ''">
+  		WHERE PD.PARAM_NAME LIKE CONCAT('%',#{qParam, jdbcType=VARCHAR},'%')
+  		OR PD.PARAM_DISPLAY_NAME LIKE CONCAT('%',#{qParam, jdbcType=VARCHAR},'%')
+  	</if>
+  </sql>
+  	
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM DICTIONARY_PARAM_DEFINITION PD
+    <include refid="where"/>
+    <if test="limit != null and start != null" >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER} 
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT COUNT(1) FROM DICTIONARY_PARAM_DEFINITION PD
+    <include refid="where"/>
+  </select>
+</mapper>

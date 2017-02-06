@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.member.persistence.mapper.MemberMapper">
+ <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.member.entity.Member">
+  <id column="MEM_ID" property="id" jdbcType="BIGINT" />
+  <result column="MEM_NAME" property="name" jdbcType="VARCHAR" />
+  <result column="MEM_USER_NAME" property="user_name" jdbcType="VARCHAR" />
+  <result column="MEM_MOBILE" property="mobile" jdbcType="VARCHAR" />
+  <result column="MEM_PHONE" property="phone" jdbcType="VARCHAR" />
+  <result column="MEM_EMAIL" property="email" jdbcType="VARCHAR" />
+  <result column="MEM_GENDER" property="gender" jdbcType="BIT" />
+  <result column="MEM_ID_CARD" property="id_card" jdbcType="VARCHAR" />
+  <result column="MEM_QQ" property="QQ" jdbcType="VARCHAR" />
+  <result column="MEM_BIRTHDAY" property="birthday" jdbcType="TIMESTAMP" />
+  <result column="MEM_NICK_NAME" property="nick_name" jdbcType="VARCHAR" />
+  <result column="MEM_ENGLISH_NAME" property="english_name" jdbcType="VARCHAR" />
+  <result column="MEM_JOB" property="job" jdbcType="VARCHAR" />
+  <result column="MEM_ADDRESS" property="address" jdbcType="VARCHAR" />
+  <result column="MEM_ORIGIN_PLACE" property="origin_place" jdbcType="VARCHAR" />
+  <result column="MEM_PHOTO" property="photo" jdbcType="LONGVARCHAR" />
+  <result column="MEM_BALANCE" property="balance" jdbcType="DECIMAL"/>
+  <result column="MEM_ENABLE" property="enable" jdbcType="BIT" />
+  <result column="PETNUM" property="petnum" jdbcType="BIGINT" />
+  <result column="MEM_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+  <result column="MEM_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  <result column="MEM_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+  <result column="MEM_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+ </resultMap>
+
+ <resultMap type="cn.cooperlink.ecplatform.member.entity.Member" id="memberResultMap">
+  <id column="M_ID" property="id" />
+  <result column="M_NAME" property="name" jdbcType="VARCHAR" />
+  <result column="M_MOBILE" property="mobile" jdbcType="VARCHAR" />
+  <result column="M_PHONE" property="phone" jdbcType="VARCHAR" />
+  <result column="M_EMAIL" property="email" jdbcType="VARCHAR" />
+  <result column="M_ID_CARD" property="id_card" jdbcType="VARCHAR" />
+  <result column="M_QQ" property="QQ" jdbcType="VARCHAR" />
+  <result column="M_BIRTHDAY" property="birthday" jdbcType="TIMESTAMP" />
+  <result column="M_NICK_NAME" property="nick_name" jdbcType="VARCHAR" />
+  <result column="M_ENGLISH_NAME" property="english_name" jdbcType="VARCHAR" />
+  <result column="M_JOB" property="job" jdbcType="VARCHAR" />
+  <result column="M_ADDRESS" property="address" jdbcType="VARCHAR" />
+  <result column="M_ORIGIN_PLACE" property="origin_place" jdbcType="VARCHAR" />
+  <result column="M_PHOTO" property="photo" jdbcType="VARCHAR" />
+  <result column="M_GENDER" property="gender" jdbcType="BIT" />
+  <result column="M_BALANCE" property="balance" jdbcType="DECIMAL"/>
+  <result column="M_ENABLE" property="enable" jdbcType="BIT"/>
+  <collection property="sub_members" ofType="cn.cooperlink.ecplatform.member.entity.SubMember">
+   <id property="id" column="MS_ID" />
+   <result property="name" column="MS_NAME" />
+   <result property="mobile" column="MS_MOBILE" />
+   <result property="gender" column="MS_GENDER" />
+   <result property="p_mem_id" column="MS_P_MEM_ID" />
+   <result property="enable" column="MS_ENABLE" jdbcType="BIT" />
+  </collection>
+
+ </resultMap>
+
+ <sql id="Base_Column_List">
+  m.ID as MEM_ID, m.NAME as MEM_NAME, m.USER_NAME as MEM_USER_NAME, m.MOBILE as
+  MEM_MOBILE, m.PHONE as
+  MEM_PHONE, m.EMAIL as MEM_EMAIL,
+  m.GENDER as MEM_GENDER, m.ID_CARD as
+  MEM_ID_CARD, m.QQ as MEM_QQ, m.BIRTHDAY as MEM_BIRTHDAY, m.NICK_NAME
+  as MEM_NICK_NAME,
+  m.ENGLISH_NAME as MEM_ENGLISH_NAME,
+  m.JOB as MEM_JOB, m.ADDRESS as MEM_ADDRESS, m.ORIGIN_PLACE as
+  MEM_ORIGIN_PLACE, m.PHOTO as MEM_PHOTO,
+  m.BALANCE as MEM_BALANCE,
+  m.ENABLE as MEM_ENABLE,
+  m.CREATE_TIME as MEM_CREATE_TIME, m.UPDATE_TIME as
+  MEM_UPDATE_TIME,
+  m.CREATE_BY as MEM_CREATE_BY, m.UPDATE_BY as MEM_UPDATE_BY
+ </sql>
+
+ <select id="loadMemberInfo" resultMap="memberResultMap" parameterType="java.lang.Long">
+  SELECT
+  m.ID as M_ID,
+  m.NAME as M_NAME,
+  m.MOBILE as M_MOBILE,
+  m.PHONE as M_PHONE,
+  m.EMAIL as M_EMAIL,
+  m.GENDER as M_GENDER,
+  m.ID_CARD as M_ID_CARD,
+  m.QQ as M_QQ,
+  m.BIRTHDAY as M_BIRTHDAY,
+  m.NICK_NAME as M_NICK_NAME,
+  m.ENGLISH_NAME as M_ENGLISH_NAME,
+  m.JOB as M_JOB,
+  m.ADDRESS as M_ADDRESS,
+  m.ORIGIN_PLACE as
+  M_ORIGIN_PLACE,
+  m.BALANCE as M_BALANCE,
+  m.PHOTO as M_PHOTO,
+  ms.ID as MS_ID,
+  ms.NAME as MS_NAME,
+  ms.MOBILE as MS_MOBILE,
+  ms.GENDER as MS_GENDER,
+  FROM mem_member m
+  LEFT JOIN mem_submember ms
+  ON ms.P_MEM_ID=m.ID AND
+  ms.ENABLE=1
+  WHERE m.ID=#{id,jdbcType=BIGINT} 
+ </select>
+
+ <!-- 插入单条数据 -->
+ <insert id="save" parameterType="cn.cooperlink.ecplatform.member.entity.Member" useGeneratedKeys="true" keyProperty="id">
+  INSERT INTO mem_member (NAME, USER_NAME, MOBILE, PHONE,
+  EMAIL, PASSWD, GENDER, ID_CARD, QQ, BIRTHDAY,
+  NICK_NAME, ENGLISH_NAME,
+  JOB, ADDRESS, ORIGIN_PLACE,
+  PHOTO, BALANCE, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY)
+  VALUES
+  (#{name,jdbcType=VARCHAR},#{user_name,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR},
+  #{phone,jdbcType=VARCHAR},
+  #{email,jdbcType=VARCHAR},#{passwd,jdbcType=VARCHAR},#{gender,jdbcType=BIT},#{id_card,jdbcType=VARCHAR},#{QQ,jdbcType=VARCHAR},
+  #{birthday,jdbcType=TIMESTAMP},#{nick_name,jdbcType=VARCHAR},#{english_name,jdbcType=VARCHAR},#{job,jdbcType=VARCHAR},
+  #{address,jdbcType=VARCHAR},#{origin_place,jdbcType=VARCHAR},#{photo,jdbcType=VARCHAR},#{balance,jdbcType=DECIMAL},#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP},
+  #{createBy,jdbcType=BIGINT}, #{updateBy,jdbcType=BIGINT})
+ </insert>
+
+ <!-- 删除数据 -->
+ <delete id="delete" parameterType="java.lang.Long">
+  DELETE FROM mem_member
+  WHERE ID = #{id,jdbcType=BIGINT}
+ </delete>
+
+ <!-- 修改数据 -->
+ <update id="update" parameterType="cn.cooperlink.ecplatform.member.entity.Member">
+  UPDATE mem_member
+  <set>
+   <if test="name != null">
+    NAME = #{name,jdbcType=VARCHAR},
+   </if>
+   <if test="user_name != null">
+    USER_NAME = #{user_name,jdbcType=VARCHAR},
+   </if>
+   <if test="mobile != null">
+    MOBILE = #{mobile,jdbcType=VARCHAR},
+   </if>
+   <if test="phone != null">
+    PHONE = #{phone,jdbcType=VARCHAR},
+   </if>
+   <if test="email != null">
+    EMAIL = #{email,jdbcType=VARCHAR},
+   </if>
+   <if test="QQ != null">
+    QQ = #{QQ,jdbcType=VARCHAR},
+   </if>
+   <if test="passwd != null">
+    PASSWD = #{passwd,jdbcType=VARCHAR},
+   </if>
+   <if test="gender != null">
+    GENDER = #{gender,jdbcType=BIT},
+   </if>
+   <if test="id_card != null">
+    ID_CARD = #{id_card,jdbcType=VARCHAR},
+   </if>
+   <if test="birthday != null">
+    BIRTHDAY = #{birthday,jdbcType=TIMESTAMP},
+   </if>
+   <if test="nick_name != null">
+    NICK_NAME = #{nick_name,jdbcType=VARCHAR},
+   </if>
+   <if test="english_name != null">
+    ENGLISH_NAME = #{english_name,jdbcType=VARCHAR},
+   </if>
+   <if test="job != null">
+    JOB = #{job,jdbcType=VARCHAR},
+   </if>
+   <if test="address != null">
+    ADDRESS = #{address,jdbcType=VARCHAR},
+   </if>
+   <if test="origin_place != null">
+    ORIGIN_PLACE = #{origin_place,jdbcType=VARCHAR},
+   </if>
+   <if test="photo != null">
+    PHOTO = #{photo,jdbcType=VARCHAR},
+   </if>
+   <if test="balance != null">
+    BALANCE = #{balance,jdbcType=DECIMAL},
+   </if>
+   <if test="enable != null">
+    ENABLE = #{enable,jdbcType=BIT},
+   </if>
+   <if test="updateTime != null">
+    UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+   </if>
+   <if test="updateBy != null">
+    UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+   </if>
+  </set>
+  where ID = #{id,jdbcType=BIGINT}
+ </update>
+
+ <!-- 查询单条数据 -->
+ <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long">
+  SELECT
+  <include refid="Base_Column_List" />
+  FROM mem_member m
+  WHERE m.id = #{id,jdbcType=BIGINT}
+ </select>
+ 
+  <select id="findByMobile" resultMap="BaseResultMap" parameterType="java.lang.String">
+  SELECT
+   <include refid="Base_Column_List" />
+  FROM mem_member m
+  WHERE m.MOBILE = #{mobile,jdbcType=VARCHAR}
+  </select>
+ 
+
+ <!-- 查询所有 -->
+ <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.String">
+  SELECT
+  <include refid="Base_Column_List" />
+  FROM mem_member m
+ </select>
+
+ <!-- 查询所有 -->
+ <select id="getAllEnableMembers" resultType="long">
+  SELECT
+  m.ID as id
+  FROM mem_member m
+  WHERE
+  m.ENABLE=1
+ </select>
+
+ <sql id="conditionSql">
+  <where>
+   <if test="name != null and name != ''">
+    m.NAME LIKE CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="mobile != null and mobile != ''">
+    and m.MOBILE like CONCAT(CONCAT('%', #{mobile,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="phone != null and phone != ''">
+    and m.PHONE LIKE CONCAT(CONCAT('%', #{phone,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="email != null and email != ''">
+    and m.EMAIL LIKE CONCAT(CONCAT('%', #{email,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="QQ != null and QQ != ''">
+    and m.QQ LIKE CONCAT(CONCAT('%', #{QQ,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="gender != null and gender != ''">
+    and m.GENDER = #{gender,jdbcType=BIT}
+   </if>
+   <if test="id_card != null and id_card != ''">
+    and m.ID_CARD LIKE CONCAT(CONCAT('%', #{id_card,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="english_name != null and english_name != ''">
+    and m.ENGLISH_NAME LIKE CONCAT(CONCAT('%', #{english_name,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="job != null and job != ''">
+    and m.JOB LIKE CONCAT(CONCAT('%', #{job,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="address != null and address != ''">
+    and m.ADDRESS LIKE CONCAT(CONCAT('%',#{address,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="origin_place != null and origin_place != ''">
+    and m.ORIGIN_PLACE LIKE CONCAT(CONCAT('%',#{origin_place,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="enable != null and enable != ''">
+    and m.ENABLE = #{enable,jdbcType=BIT}
+   </if>
+   <if test="start_create_time != null and start_create_time != ''">
+    <![CDATA[ and DATE_FORMAT(m.CREATE_TIME,'%Y-%m-%d') >= DATE_FORMAT(#{start_create_time,jdbcType=TIMESTAMP},'%Y-%m-%d') ]]> 
+   </if>
+   <if test="end_create_time != null and end_create_time != ''">
+    <![CDATA[ and DATE_FORMAT(m.CREATE_TIME,'%Y-%m-%d') <= DATE_FORMAT(#{end_create_time,jdbcType=TIMESTAMP},'%Y-%m-%d') ]]>
+   </if>
+  </where>
+ </sql>
+
+ <!-- 条件查询 -->
+ <select id="findByCondition" resultMap="BaseResultMap" parameterType="map">
+  SELECT
+    (SELECT COUNT(1) FROM ps_member_pet pm WHERE pm.MEM_ID=m.ID ) as PETNUM,
+  <include refid="Base_Column_List" />
+  FROM mem_member m
+  <include refid="conditionSql" />
+  <if test="limit != null and start != null">
+   LIMIT #{start, jdbcType=INTEGER},#{limit, jdbcType=INTEGER}
+  </if>
+ </select>
+
+ <!-- 统计记录数 -->
+ <select id="count" resultType="long" parameterType="map">
+  SELECT count(1) FROM mem_member m
+  <include refid="conditionSql" />
+  <if test="limit != null and start != null">
+   LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER}
+  </if>
+ </select>
+</mapper>

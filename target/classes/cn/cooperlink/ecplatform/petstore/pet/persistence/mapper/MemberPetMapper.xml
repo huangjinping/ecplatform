@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.petstore.pet.persistence.mapper.MemberPetMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.petstore.pet.entity.Pet" >
+    <id column="P_ID" property="id" jdbcType="BIGINT" />
+    <result column="P_NICK_NAME" property="nick_name" jdbcType="VARCHAR" />
+    <result column="P_GENDER" property="gender" jdbcType="BIT" />
+    <result column="P_BIRTHDAY" property="birthday" jdbcType="TIMESTAMP" />
+    <result column="P_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="P_PHOTO" property="photo" jdbcType="LONGVARCHAR" />
+    <result column="P_STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="P_CATEGORY" property="category" jdbcType="VARCHAR" />
+    <result column="P_SMALL_CATEGORY" property="small_category" jdbcType="VARCHAR" />
+    <result column="P_STARTFOSTER_TIME" property="startfoster_time" jdbcType="TIMESTAMP" />
+    <result column="P_ENDFOSTER_TIME" property="endfoster_time" jdbcType="TIMESTAMP" />
+    <result column="P_REALEND_TIME" property="realend_time" jdbcType="TIMESTAMP" />
+    
+    <result column="P_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="P_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="P_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="P_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    p.ID as P_ID, p.NICK_NAME as P_NICK_NAME, p.GENDER as P_GENDER, p.BIRTHDAY as P_BIRTHDAY, 
+    p.DESCRIPTION as P_DESCRIPTION, p.PHOTO as P_PHOTO, p.STATUS as P_STATUS, p.CATEGORY as P_CATEGORY,
+    p.SMALL_CATEGORY as P_SMALL_CATEGORY, p.STARTFOSTER_TIME as P_STARTFOSTER_TIME, p.ENDFOSTER_TIME as P_ENDFOSTER_TIME,
+    p.REALEND_TIME as P_REALEND_TIME,p.CREATE_TIME as P_CREATE_TIME, p.UPDATE_TIME as P_UPDATE_TIME,
+    p.CREATE_BY as P_CREATE_BY, p.UPDATE_BY as P_UPDATE_BY
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.petstore.pet.entity.MemberPet">
+    INSERT INTO ps_member_pet (MEM_ID, PET_ID)
+    VALUES (#{mem_id,jdbcType=BIGINT}, #{pet_id,jdbcType=BIGINT})
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM ps_member_pet
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <delete id="deleteMemberPet" parameterType="cn.cooperlink.ecplatform.petstore.pet.entity.MemberPet" >
+    DELETE FROM ps_member_pet
+    WHERE MEM_ID = #{mem_id,jdbcType=BIGINT} AND PET_ID = #{pet_id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 查询我的宠物列表 -->
+  <select id="getMyPet" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM ps_member_pet pm,ps_pet p
+    WHERE pm.PET_ID=p.ID AND pm.MEM_ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT count(1) FROM ps_pet p
+  </select>
+</mapper>

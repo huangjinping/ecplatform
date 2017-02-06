@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.system.persistence.mapper.OrgUserMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.system.entity.OrgUser" >
+    <id column="OU_ID" property="id" jdbcType="BIGINT" />
+    <result column="OU_ORG_ID" property="orgId" jdbcType="BIGINT" />
+    <result column="OU_USER_ID" property="userId" jdbcType="BIGINT" />
+    <result column="OU_IS_PRIMARY" property="isPrimary" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    OU.ID as OU_ID, OU.ORG_ID as OU_ORG_ID, OU.USER_ID as OU_USER_ID, OU.IS_PRIMARY as OU_IS_PRIMARY
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.system.entity.OrgUser" >
+    INSERT INTO SYS_ORG_USER (ID, ORG_ID, USER_ID, 
+      IS_PRIMARY)
+    VALUES (#{id,jdbcType=BIGINT}, #{orgId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
+      #{isPrimary,jdbcType=INTEGER})
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM SYS_ORG_USER
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.system.entity.OrgUser" >
+    UPDATE SYS_ORG_USER
+    <set >
+      <if test="orgId != null" >
+        ORG_ID = #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="isPrimary != null" >
+        IS_PRIMARY = #{isPrimary,jdbcType=INTEGER},
+      </if>
+    </set>
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM SYS_ORG_USER OU
+    WHERE OU.ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM SYS_ORG_USER OU
+  </select>
+  
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM SYS_ORG_USER OU
+    <if test="limit != null and start != null" >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER} 
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT COUNT(1) FROM SYS_ORG_USER OU
+  </select>
+</mapper>

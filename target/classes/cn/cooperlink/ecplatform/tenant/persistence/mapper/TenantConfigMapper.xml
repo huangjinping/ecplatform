@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.tenant.persistence.mapper.TenantConfigMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.tenant.entity.TenantConfig" >
+    <id column="C_ID" property="id" jdbcType="BIGINT" />
+    <result column="C_TENANT_ID" property="tenantId" jdbcType="BIGINT" />
+    <result column="C_PARAM_DEF_ID" property="paramDefId" jdbcType="BIGINT" />
+    <result column="C_CONFIG_VALUE" property="configValue" jdbcType="VARCHAR" />
+    <result column="C_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="C_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="C_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+    <result column="C_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    C.ID as C_ID, C.TENANT_ID as C_TENANT_ID, C.PARAM_DEF_ID as C_PARAM_DEF_ID, C.CONFIG_VALUE as C_CONFIG_VALUE, 
+    C.CREATE_BY as C_CREATE_BY, C.CREATE_TIME as C_CREATE_TIME, C.UPDATE_BY as C_UPDATE_BY, 
+    C.UPDATE_TIME as C_UPDATE_TIME
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.tenant.entity.TenantConfig" >
+    INSERT INTO TEN_TENANT_CONFIG (ID, TENANT_ID, PARAM_DEF_ID, 
+      CONFIG_VALUE, CREATE_BY, CREATE_TIME, 
+      UPDATE_BY, UPDATE_TIME)
+    VALUES (#{id,jdbcType=BIGINT}, #{tenantId,jdbcType=BIGINT}, #{paramDefId,jdbcType=BIGINT}, 
+      #{configValue,jdbcType=VARCHAR}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 批量保存 -->
+  <insert id="saveBatch" parameterType="list" >
+    INSERT INTO TEN_TENANT_CONFIG (ID, TENANT_ID, PARAM_DEF_ID, 
+      CONFIG_VALUE, CREATE_BY, CREATE_TIME, 
+      UPDATE_BY, UPDATE_TIME)
+    VALUES 
+    <foreach collection="list" separator="," item="item">
+   	  (
+   	  	#{item.id,jdbcType=BIGINT}, #{item.tenantId,jdbcType=BIGINT}, #{item.paramDefId,jdbcType=BIGINT}, 
+      	#{item.configValue,jdbcType=VARCHAR}, #{item.createBy,jdbcType=BIGINT}, #{item.createTime,jdbcType=TIMESTAMP}, 
+      	#{item.updateBy,jdbcType=BIGINT}, #{item.updateTime,jdbcType=TIMESTAMP}
+      )
+    </foreach>
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM TEN_TENANT_CONFIG
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.tenant.entity.TenantConfig" >
+    UPDATE TEN_TENANT_CONFIG
+    <set >
+      <if test="tenantId != null" >
+        TENANT_ID = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="paramDefId != null" >
+        PARAM_DEF_ID = #{paramDefId,jdbcType=BIGINT},
+      </if>
+      <if test="configValue != null" >
+        CONFIG_VALUE = #{configValue,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM TEN_TENANT_CONFIG C
+    WHERE C.ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />,
+  		PD.PARAM_NAME AS paramName
+  	FROM 
+  		TEN_TENANT_CONFIG C, DICTIONARY_PARAM_DEFINITION PD
+  	WHERE
+  		C.PARAM_DEF_ID = PD.ID
+	<if test="tenantId != null and tenantId > 0">
+		AND C.TENANT_ID = #{tenantId,jdbcType=BIGINT}
+	</if>
+  </select>
+  
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM TEN_TENANT_CONFIG C
+    <if test="limit != null and start != null" >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER} 
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT COUNT(1) FROM TEN_TENANT_CONFIG C
+  </select>
+  
+  <select id="findTenantParams" resultMap="BaseResultMap" parameterType="java.lang.Long">
+  	SELECT 
+  		<include refid="Base_Column_List" />,
+  		PD.PARAM_NAME AS paramName
+  	FROM 
+  		TEN_TENANT_CONFIG C, DICTIONARY_PARAM_DEFINITION PD
+  	WHERE
+  		C.PARAM_DEF_ID = PD.ID
+  		AND C.TENANT_ID = #{tenantId, jdbcType=BIGINT}
+  </select>
+  
+  <select id="deleteTenantConfig" parameterType="java.lang.Long">
+  	DELETE FROM TEN_TENANT_CONFIG
+    WHERE TENANT_ID = #{tenantId,jdbcType=BIGINT}
+  </select>
+  
+</mapper>

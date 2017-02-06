@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.system.persistence.mapper.UserRoleMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.system.entity.UserRole" >
+    <id column="UR_ID" property="id" jdbcType="BIGINT" />
+    <result column="UR_USER_ID" property="userId" jdbcType="BIGINT" />
+    <result column="UR_ROLE_ID" property="roleId" jdbcType="BIGINT" />
+    <result column="UR_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="UR_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UR_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+    <result column="UR_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    UR.ID as UR_ID, UR.USER_ID as UR_USER_ID, UR.ROLE_ID as UR_ROLE_ID, UR.CREATE_BY as UR_CREATE_BY, 
+    UR.CREATE_TIME as UR_CREATE_TIME, UR.UPDATE_BY as UR_UPDATE_BY, UR.UPDATE_TIME as UR_UPDATE_TIME
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.system.entity.UserRole" >
+    INSERT INTO SYS_USER_ROLE (ID, USER_ID, ROLE_ID, 
+      CREATE_BY, CREATE_TIME, UPDATE_BY, 
+      UPDATE_TIME)
+    VALUES (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM SYS_USER_ROLE
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.system.entity.UserRole" >
+    UPDATE SYS_USER_ROLE
+    <set >
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="roleId != null" >
+        ROLE_ID = #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM SYS_USER_ROLE UR
+    WHERE UR.ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM SYS_USER_ROLE UR
+  </select>
+  
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM SYS_USER_ROLE UR
+    <if test="limit != null and start != null" >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER} 
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT COUNT(1) FROM SYS_USER_ROLE UR
+  </select>
+  
+  <!--  -->
+  <insert id="saveBatch" parameterType="java.util.List" >
+    INSERT INTO SYS_USER_ROLE (ID, USER_ID, ROLE_ID, 
+      CREATE_BY, CREATE_TIME, UPDATE_BY, 
+      UPDATE_TIME)
+    VALUES 
+    <foreach collection="list" separator="," item="item">
+    (
+      #{item.id,jdbcType=BIGINT}, #{item.userId,jdbcType=BIGINT}, #{item.roleId,jdbcType=BIGINT}, 
+      #{item.createBy,jdbcType=BIGINT}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateBy,jdbcType=BIGINT}, 
+      #{item.updateTime,jdbcType=TIMESTAMP}
+    )
+    </foreach>
+  </insert>
+  
+  <!-- 删除角色下所有授权 -->
+  <delete id="deleteByRoleId" parameterType="java.lang.Long" >
+    DELETE FROM SYS_USER_ROLE
+    WHERE ROLE_ID = #{roleId,jdbcType=BIGINT}
+  </delete>
+  
+</mapper>

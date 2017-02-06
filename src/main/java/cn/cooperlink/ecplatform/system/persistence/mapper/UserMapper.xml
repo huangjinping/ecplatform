@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.system.persistence.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.system.entity.User" >
+    <id column="U_ID" property="id" jdbcType="BIGINT" />
+    <result column="U_USERNAME" property="username" jdbcType="VARCHAR" />
+    <result column="U_PASSWORD" property="password" jdbcType="VARCHAR" />
+    <result column="U_EMPLOYEE_NO" property="employeeNo" jdbcType="VARCHAR" />
+    <result column="U_NAME" property="name" jdbcType="VARCHAR" />
+    <result column="U_PHONE_NO" property="phoneNo" jdbcType="VARCHAR" />
+    <result column="U_SEX" property="sex" jdbcType="INTEGER" />
+    <result column="U_QQ" property="qq" jdbcType="VARCHAR" />
+    <result column="U_E_MAIL" property="eMail" jdbcType="VARCHAR" />
+    <result column="U_PHOTO" property="photo" jdbcType="VARCHAR" />
+    <result column="U_USER_TYPE" property="userType" jdbcType="INTEGER" />
+    <result column="U_REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="U_ORDER_FIELD" property="orderField" jdbcType="INTEGER" />
+    <result column="U_VALIDITY" property="validity" jdbcType="INTEGER" />
+    <result column="U_TENANT_ID" property="tenantId" jdbcType="BIGINT" />
+    <result column="U_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="U_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="U_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+    <result column="U_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    U.ID as U_ID, U.USERNAME as U_USERNAME, U.PASSWORD as U_PASSWORD, U.EMPLOYEE_NO as U_EMPLOYEE_NO, 
+    U.NAME as U_NAME, U.PHONE_NO as U_PHONE_NO, U.SEX as U_SEX, U.QQ as U_QQ, U.E_MAIL as U_E_MAIL, U.PHOTO as U_PHOTO, 
+    U.USER_TYPE as U_USER_TYPE, U.REMARK as U_REMARK, U.ORDER_FIELD as U_ORDER_FIELD, 
+    U.TENANT_ID as U_TENANT_ID, U.CREATE_BY as U_CREATE_BY, U.CREATE_TIME as U_CREATE_TIME, 
+    U.UPDATE_BY as U_UPDATE_BY, U.UPDATE_TIME as U_UPDATE_TIME,U.VALIDITY as U_VALIDITY
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.system.entity.User" 
+  	useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, 
+      EMPLOYEE_NO, NAME, PHONE_NO, SEX,
+      QQ, E_MAIL, PHOTO, USER_TYPE, 
+      REMARK, ORDER_FIELD, TENANT_ID, 
+      CREATE_BY, CREATE_TIME, UPDATE_BY, 
+      UPDATE_TIME, VALIDITY)
+    VALUES (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{employeeNo,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{phoneNo,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER},
+      #{qq,jdbcType=VARCHAR}, #{eMail,jdbcType=VARCHAR}, #{photo,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR}, #{orderField,jdbcType=INTEGER}, #{tenantId,jdbcType=BIGINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{validity,jdbcType=INTEGER})
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM SYS_USER
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.system.entity.User" >
+    UPDATE SYS_USER
+    <set>
+      <if test="username != null" >
+        USERNAME = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        PASSWORD = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeNo != null" >
+        EMPLOYEE_NO = #{employeeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNo != null" >
+        PHONE_NO = #{phoneNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        SEX = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="qq != null" >
+        QQ = #{qq,jdbcType=VARCHAR},
+      </if>
+      <if test="eMail != null" >
+        E_MAIL = #{eMail,jdbcType=VARCHAR},
+      </if>
+      <if test="photo != null" >
+        PHOTO = #{photo,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        USER_TYPE = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="orderField != null" >
+        ORDER_FIELD = #{orderField,jdbcType=INTEGER},
+      </if>
+      <if test="tenantId != null" >
+        TENANT_ID = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE ID = #{id,jdbcType=BIGINT} AND VALIDITY = 1
+  </update>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM 
+    	SYS_USER U
+    WHERE U.ID = #{id,jdbcType=BIGINT}
+    AND U.TENANT_ID = #{tenantId, jdbcType=BIGINT}
+    AND U.VALIDITY = 1
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM 
+    	SYS_USER U
+    WHERE U.TENANT_ID = #{tenantId, jdbcType=BIGINT}
+    AND U.VALIDITY = 1
+  </select>
+  
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />,
+    O.ID AS orgId, O.SHORT_NAME AS orgName,
+    O.NAME_FULLPATH AS orgNameFullpath 
+    FROM 
+    	SYS_USER U, SYS_ORG_USER OU, SYS_ORG O
+    WHERE U.ID = OU.USER_ID AND OU.ORG_ID = O.ID
+   	AND OU.ORG_ID = #{orgId, jdbcType=BIGINT}
+   	AND U.TENANT_ID = #{tenantId, jdbcType=BIGINT}
+   	AND U.VALIDITY = 1
+    <if test=" limit != null and start != null " >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER} 
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map">
+    SELECT COUNT(*) 
+    FROM 
+    	SYS_USER U, SYS_ORG_USER OU
+    WHERE U.ID = OU.USER_ID
+   	AND OU.ORG_ID = #{orgId, jdbcType=BIGINT}
+   	AND U.TENANT_ID = #{tenantId, jdbcType=BIGINT}
+   	AND U.VALIDITY = 1
+  </select>
+  
+  <!-- 统计同加盟商户下员工编号对应的员工数 -->
+  <select id="getCountByEmpNo" resultType="long" 
+  	parameterType="cn.cooperlink.ecplatform.system.entity.User">
+  	SELECT COUNT(*) FROM SYS_USER 
+  	WHERE EMPLOYEE_NO = #{employeeNo, jdbcType=VARCHAR}
+  	AND TENANT_ID = #{tenantId, jdbcType=BIGINT}
+  	AND VALIDITY = 1
+  	<if test="id != null and id > 0">
+  		AND ID != #{id, jdbcType=BIGINT}
+  	</if>
+  </select>
+  
+  <select id="getCountByIdAndPwd" resultType="long" 
+  	parameterType="cn.cooperlink.ecplatform.system.entity.User">
+  	SELECT COUNT(*) FROM SYS_USER
+  	WHERE ID = #{id, jdbcType=BIGINT}
+  	AND TENANT_ID = #{tenantId, jdbcType=BIGINT}
+  	AND PASSWORD = #{password, jdbcType=BIGINT}
+  	AND VALIDITY = 1
+  </select>
+  
+  <!-- 修改密码 -->
+  <update id="updatePassword" parameterType="cn.cooperlink.ecplatform.system.entity.User">
+  	UPDATE SYS_USER
+    SET PASSWORD = #{password,jdbcType=VARCHAR}
+    WHERE ID IN ${id} AND TENANT_ID = #{tenantId,jdbcType=BIGINT}
+    AND VALIDITY = 1
+  </update>
+  
+  <select id="getTenantAdmin" resultMap="BaseResultMap" parameterType="map" >
+ 	SELECT 
+    <include refid="Base_Column_List" />
+    FROM 
+    	SYS_USER U
+    WHERE U.USER_TYPE = 1
+    AND U.TENANT_ID = #{tenantId, jdbcType=BIGINT}
+    AND U.VALIDITY = 1
+  </select>
+  
+  <update id="updateToInvalid" parameterType="cn.cooperlink.ecplatform.system.entity.User">
+  	UPDATE SYS_USER
+    SET VALIDITY = 9
+    WHERE ID IN #{id,jdbcType=BIGINT} 
+    AND TENANT_ID = #{tenantId,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

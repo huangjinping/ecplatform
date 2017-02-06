@@ -1,0 +1,41 @@
+.lbl-member-name {
+	padding-left:5px;
+    font-size: 12px;
+    text-align: right;
+    float: left;
+    line-height:25px;
+}
+.lbl-member-mobile {
+	padding-left:5px;
+    font-size: 12px;
+    text-align: right;
+    float: left;
+    line-height:25px;
+}
+.lbl-member-create {
+    padding-left:5px;
+    font-size: 12px;
+    text-align: right;
+    float: left;
+    line-height:25px;
+}
+.lbl-member-status {
+	padding-left:5px;
+    font-size: 12px;
+    text-align: right;
+    float: left;
+    line-height:25px;
+}
+.lbl-member-search {
+	padding-left:5px;
+    font-size: 12px;
+    text-align: right;
+    float: left;
+    line-height:25px;
+}
+.lbl-member-reset {
+    font-size: 12px;
+    text-align: right;
+    float: left;
+    line-height:25px;
+}

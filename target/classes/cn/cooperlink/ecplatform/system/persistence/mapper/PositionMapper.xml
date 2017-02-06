@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.system.persistence.mapper.PositionMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.system.entity.Position" >
+    <id column="P_ID" property="id" jdbcType="BIGINT" />
+    <result column="P_PARENT_ID" property="parentId" jdbcType="BIGINT" />
+    <result column="P_NAME" property="name" jdbcType="VARCHAR" />
+    <result column="P_CODE" property="code" jdbcType="VARCHAR" />
+    <result column="P_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="P_ORDER_FIELD" property="orderField" jdbcType="INTEGER" />
+    <result column="P_ID_FULLPATH" property="idFullpath" jdbcType="VARCHAR" />
+    <result column="P_NAME_FULLPATH" property="nameFullpath" jdbcType="VARCHAR" />
+    <result column="P_ORG_ID" property="orgId" jdbcType="BIGINT" />
+    <result column="P_TENANT_ID" property="tenantId" jdbcType="BIGINT" />
+    <result column="P_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="P_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="P_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+    <result column="P_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    P.ID as P_ID, P.PARENT_ID as P_PARENT_ID, P.NAME as P_NAME, P.CODE as P_CODE, P.DESCRIPTION as P_DESCRIPTION, 
+    P.ORDER_FIELD as P_ORDER_FIELD, P.ID_FULLPATH as P_ID_FULLPATH, P.NAME_FULLPATH as P_NAME_FULLPATH, 
+    P.ORG_ID as P_ORG_ID, P.TENANT_ID as P_TENANT_ID, P.CREATE_BY as P_CREATE_BY, P.CREATE_TIME as P_CREATE_TIME, 
+    P.UPDATE_BY as P_UPDATE_BY, P.UPDATE_TIME as P_UPDATE_TIME
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.system.entity.Position" >
+    INSERT INTO SYS_POSITION (ID, PARENT_ID, NAME, 
+      CODE, DESCRIPTION, ORDER_FIELD, 
+      ID_FULLPATH, NAME_FULLPATH, ORG_ID, 
+      TENANT_ID, CREATE_BY, CREATE_TIME, 
+      UPDATE_BY, UPDATE_TIME)
+    VALUES (#{id,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
+      #{code,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{orderField,jdbcType=INTEGER}, 
+      #{idFullpath,jdbcType=VARCHAR}, #{nameFullpath,jdbcType=VARCHAR}, #{orgId,jdbcType=BIGINT}, 
+      #{tenantId,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM SYS_POSITION
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.system.entity.Position" >
+    UPDATE SYS_POSITION
+    <set >
+      <if test="parentId != null" >
+        PARENT_ID = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        CODE = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="orderField != null" >
+        ORDER_FIELD = #{orderField,jdbcType=INTEGER},
+      </if>
+      <if test="idFullpath != null" >
+        ID_FULLPATH = #{idFullpath,jdbcType=VARCHAR},
+      </if>
+      <if test="nameFullpath != null" >
+        NAME_FULLPATH = #{nameFullpath,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        ORG_ID = #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="tenantId != null" >
+        TENANT_ID = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM SYS_POSITION P
+    WHERE P.ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM SYS_POSITION P
+  </select>
+  
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM SYS_POSITION P
+    <if test="limit != null and start != null" >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER} 
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT COUNT(1) FROM SYS_POSITION P
+  </select>
+</mapper>

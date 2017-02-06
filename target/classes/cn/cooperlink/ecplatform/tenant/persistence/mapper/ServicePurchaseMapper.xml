@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.tenant.persistence.mapper.ServicePurchaseMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.tenant.entity.ServicePurchase" >
+    <id column="FUNC_ID" property="id" jdbcType="BIGINT" />
+    <result column="SP_ID" property="spId" jdbcType="BIGINT" />
+    <result column="SP_TENANT_ID" property="tenantId" jdbcType="BIGINT" />
+    <result column="SP_FUNC_ID" property="funcId" jdbcType="BIGINT" />
+    <result column="SP_PURCHASE_DATE" property="purchaseDate" jdbcType="DATE" />
+    <result column="SP_EXPIRY_DATE" property="expiryDate" jdbcType="DATE" />
+    <result column="SP_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="SP_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="SP_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+    <result column="SP_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    SP.ID as SP_ID, SP.TENANT_ID as SP_TENANT_ID, SP.FUNC_ID as SP_FUNC_ID, SP.PURCHASE_DATE as SP_PURCHASE_DATE, 
+    SP.EXPIRY_DATE as SP_EXPIRY_DATE, SP.CREATE_BY as SP_CREATE_BY, SP.CREATE_TIME as SP_CREATE_TIME, 
+    SP.UPDATE_BY as SP_UPDATE_BY, SP.UPDATE_TIME as SP_UPDATE_TIME
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.tenant.entity.ServicePurchase" 
+  	useGeneratedKeys="true" keyProperty="id">
+    insert into ten_service_purchase (ID, TENANT_ID, FUNC_ID, 
+      PURCHASE_DATE, EXPIRY_DATE, CREATE_BY, 
+      CREATE_TIME, UPDATE_BY, UPDATE_TIME
+      )
+    values (#{id,jdbcType=BIGINT}, #{tenantId,jdbcType=BIGINT}, #{funcId,jdbcType=BIGINT}, 
+      #{purchaseDate,jdbcType=DATE}, #{expiryDate,jdbcType=DATE}, #{createBy,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    delete from ten_service_purchase
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.tenant.entity.ServicePurchase" >
+    update ten_service_purchase
+    <set >
+      <if test="tenantId != null" >
+        TENANT_ID = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="funcId != null" >
+        FUNC_ID = #{funcId,jdbcType=BIGINT},
+      </if>
+      <if test="purchaseDate != null" >
+        PURCHASE_DATE = #{purchaseDate,jdbcType=DATE},
+      </if>
+      <if test="expiryDate != null" >
+        EXPIRY_DATE = #{expiryDate,jdbcType=DATE},
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ten_service_purchase SP
+    where SP.ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ten_service_purchase SP
+  </select>
+  
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />,
+    F.ID AS FUNC_ID,
+    F.URL AS url,
+    F.FUNC_CODE AS funcCode,
+    F.FUNC_NAME AS funcName,
+    F.PARENT_ID AS parentId,
+    F.ID_FULLPATH AS funcIdFullpath,
+    RT.CN_SHORT_NAME AS tenantName
+    FROM 
+    	TEN_SERVICE_PURCHASE SP,
+    	TEN_REG_TENANT RT,
+    	DICTIONARY_FUNCTION F
+    WHERE 
+    	SP.TENANT_ID = RT.ID
+    	AND SP.FUNC_ID = F.ID
+    	AND SP.TENANT_ID = #{tenantId,jdbcType=BIGINT}
+    <if test="justActivity != null and justActivity = 'yes'">
+    	AND F.TYPE = 3
+    </if>
+    <if test="funcName != null" >
+    	AND F.FUNC_NAME LIKE '%${funcName}%'
+    </if>
+    	ORDER BY F.ORDER_FIELD ASC
+    <if test="limit != null and start != null" >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER}
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT 
+    	COUNT(1) 
+    FROM 
+    	TEN_SERVICE_PURCHASE SP,
+    	TEN_REG_TENANT RT,
+    	DICTIONARY_FUNCTION F
+    WHERE 
+    	SP.TENANT_ID = RT.ID
+    	AND SP.FUNC_ID = F.ID
+    	AND SP.TENANT_ID = #{tenantId,jdbcType=BIGINT}
+    <if test="funcName != null" >
+    	AND F.FUNC_NAME LIKE '%${funcName}%'
+    </if>
+  </select>
+  
+  <insert id="saveBatch" parameterType="list">
+  	insert into ten_service_purchase 
+  	(
+  	  ID, TENANT_ID, FUNC_ID, 
+      PURCHASE_DATE, EXPIRY_DATE, CREATE_BY, 
+      CREATE_TIME, UPDATE_BY, UPDATE_TIME
+    )
+   	values 
+    <foreach collection="list" separator="," item="item">
+    (
+    	#{item.id,jdbcType=BIGINT}, #{item.tenantId,jdbcType=BIGINT}, #{item.funcId,jdbcType=BIGINT}, 
+      	#{item.purchaseDate,jdbcType=DATE}, #{item.expiryDate,jdbcType=DATE}, #{item.createBy,jdbcType=BIGINT}, 
+      	#{item.createTime,jdbcType=TIMESTAMP}, #{item.updateBy,jdbcType=BIGINT}, #{item.updateTime,jdbcType=TIMESTAMP}
+    )
+   	</foreach>
+  </insert>
+  
+  <delete id="deleteByTenant" parameterType="java.lang.Long">
+  	DELETE FROM TEN_SERVICE_PURCHASE WHERE TENANT_ID = #{tenantId,jdbcType=BIGINT}
+  </delete>
+  
+  <select id="findAllService" parameterType="java.lang.Long" 
+  	resultType="cn.cooperlink.ecplatform.tenant.persistence.result.FuncSelectTree">
+  	SELECT 
+  		F.ID as id, F.PARENT_ID as parentId, F.FUNC_NAME as text, 
+  		F.ICON_CLS as iconCls, F.TYPE as type, SP.ID as purchasedId
+  	FROM 
+  		DICTIONARY_FUNCTION F 
+	LEFT JOIN 
+		TEN_SERVICE_PURCHASE SP
+	ON F.ID = SP.FUNC_ID
+  	WHERE F.VALIDITY = 1
+  	ORDER BY F.ORDER_FIELD ASC
+  </select>
+  
+  <select id="findPurchasedSvrs" parameterType="map" 
+  	resultType="cn.cooperlink.ecplatform.tenant.persistence.result.AuthorizedFuncTree">
+  	SELECT 
+  		F.ID as id, F.PARENT_ID as parentId, F.FUNC_NAME as text, 
+  		F.ICON_CLS as iconCls, F.TYPE as type, SP.ID as purchasedId,
+  		RF.FUNC_ID as authorizedSvrId, F.ID_FULLPATH as funcIdFullpath
+  	FROM 
+  		TEN_SERVICE_PURCHASE SP 
+	LEFT JOIN 
+		DICTIONARY_FUNCTION F 
+	ON 
+	    SP.FUNC_ID = F.ID 
+	    AND
+	    SP.TENANT_ID = #{tenantId,jdbcType=BIGINT}
+		AND F.TYPE = 3
+	LEFT JOIN
+		SYS_ROLE_FUNC RF
+	ON 
+	    F.ID = RF.FUNC_ID 
+    <choose>
+    	<when test="roleId != null and roleId > 0">
+			AND RF.ROLE_ID = #{roleId, jdbcType=BIGINT}		
+    	</when>
+    	<otherwise>
+    		AND RF.ROLE_ID = 0		
+    	</otherwise>
+    </choose>
+    WHERE F.TYPE = 3 AND F.VALIDITY = 1
+    ORDER BY F.ORDER_FIELD ASC
+  </select>
+  
+  <!-- 删除商户下的角色功能授权 -->
+  <delete id="deleteRoleFuncByFuncRoleIds" parameterType="java.util.List">
+  	DELETE FROM SYS_ROLE_FUNC WHERE ID IN
+  	<foreach collection="list" open="(" close=")" item="item" separator=",">
+  		#{item, jdbcType=BIGINT}
+  	</foreach>
+  </delete>
+  
+  <!-- 删除失效的角色功能IDS -->
+  <select id="findInvalidFuncRoleIds" parameterType="java.lang.Long" resultType="java.lang.Long">
+	SELECT RF1.ID FROM 
+	SYS_ROLE_FUNC RF1
+	LEFT JOIN
+	SYS_ROLE R
+	ON RF1.ROLE_ID = R.ID
+	LEFT JOIN 
+	TEN_SERVICE_PURCHASE SP
+	ON RF1.FUNC_ID = SP.FUNC_ID
+	WHERE R.TENANT_ID = #{tenantId, jdbcType=BIGINT} AND (SP.ID = 0 OR SP.ID IS NULL)
+  </select>
+  
+</mapper>

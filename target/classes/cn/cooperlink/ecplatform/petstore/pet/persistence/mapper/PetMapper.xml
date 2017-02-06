@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.petstore.pet.persistence.mapper.PetMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.petstore.pet.entity.Pet" >
+    <id column="P_ID" property="id" jdbcType="BIGINT" />
+    <result column="P_NICK_NAME" property="nick_name" jdbcType="VARCHAR" />
+    <result column="P_GENDER" property="gender" jdbcType="BIT" />
+    <result column="P_BIRTHDAY" property="birthday" jdbcType="TIMESTAMP" />
+    <result column="P_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="P_PHOTO" property="photo" jdbcType="LONGVARCHAR" />
+    <result column="P_STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="P_CATEGORY" property="category" jdbcType="VARCHAR" />
+    <result column="P_SMALL_CATEGORY" property="small_category" jdbcType="VARCHAR" />
+    <result column="P_STARTFOSTER_TIME" property="startfoster_time" jdbcType="TIMESTAMP" />
+    <result column="P_ENDFOSTER_TIME" property="endfoster_time" jdbcType="TIMESTAMP" />
+    <result column="P_REALEND_TIME" property="realend_time" jdbcType="TIMESTAMP" />
+    
+    <result column="P_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="P_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="P_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="P_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    p.ID as P_ID, p.NICK_NAME as P_NICK_NAME, p.GENDER as P_GENDER, p.BIRTHDAY as P_BIRTHDAY, 
+    p.DESCRIPTION as P_DESCRIPTION, p.PHOTO as P_PHOTO, p.STATUS as P_STATUS, p.CATEGORY as P_CATEGORY,
+    p.SMALL_CATEGORY as P_SMALL_CATEGORY, p.STARTFOSTER_TIME as P_STARTFOSTER_TIME, p.ENDFOSTER_TIME as P_ENDFOSTER_TIME,
+    p.REALEND_TIME as P_REALEND_TIME,p.CREATE_TIME as P_CREATE_TIME, p.UPDATE_TIME as P_UPDATE_TIME,
+    p.CREATE_BY as P_CREATE_BY, p.UPDATE_BY as P_UPDATE_BY
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.petstore.pet.entity.Pet" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO ps_pet (NICKNAME, GENDER, BIRTHDAY, DESCRIPTION, PHOTO, 
+        STATUS, CATEGORY, SMALL_CATEGORY, STARTFOSTER_TIME, ENDFOSTER_TIME,
+        REALEND_TIME,CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY)
+    VALUES (#{nick_name,jdbcType=VARCHAR}, #{gender,jdbcType=BIT},
+            #{birthday,jdbcType=TIMESTAMP},#{description,jdbcType=VARCHAR},#{photo,jdbcType=VARCHAR},
+            #{status,jdbcType=VARCHAR},#{category,jdbcType=VARCHAR},#{small_category,jdbcType=VARCHAR},
+            #{startfoster_time,jdbcType=TIMESTAMP},#{endfoster_time,jdbcType=TIMESTAMP},#{realend_time,jdbcType=TIMESTAMP},
+            #{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP},
+            #{createBy,jdbcType=BIGINT}, #{updateBy,jdbcType=BIGINT})
+  </insert>
+  
+  <insert id="saveMemberPet" parameterType="Map"  >
+      INSERT INTO ps_member_pet (MEM_ID,PET_ID)
+      VALUES (#{mem_id,jdbcType=BIGINT},#{pet_id,jdbcType=BIGINT})      
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM ps_pet
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <delete id="deleteMemberPet" parameterType="Map" >
+    DELETE FROM ps_member_pet
+    WHERE MEM_ID = #{mem_id,jdbcType=BIGINT} AND PET_ID = #{pet_id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.petstore.pet.entity.Pet" >
+    UPDATE ps_pet
+    <set >
+      <if test="nick_name != null" >
+        NICK_NAME = #{nick_name,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        GENDER = #{gender,jdbcType=BIT},
+      </if>
+      <if test="birthday != null" >
+        BIRTHDAY = #{birthday,jdbcType=TIMESTAMP},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="photo != null" >
+        PHOTO = #{photo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        CATEGORY = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="small_category != null" >
+        CATEGORY = #{small_category,jdbcType=VARCHAR},
+      </if>
+      <if test="startfoster_time != null" >
+        STARTFOSTER_TIME = #{startfoster_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endfoster_time != null" >
+        ENDFOSTER_TIME = #{endfoster_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="realend_time != null" >
+        REALEND_TIME = #{realend_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+      </if>
+    </set>
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询我的宠物列表 -->
+  <select id="getMyPet" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM ps_member_pet pm,ps_pet p
+    WHERE pm.PET_ID=p.ID AND pm.MEM_ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM ps_member_pet,ps_pet p
+    WHERE p.ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询宠物详情 -->
+  <select id="findPet" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM ps_pet p
+    WHERE p.ID = #{petId,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 根据宠物ID查询会员ID -->
+  <select id="findMemByPet" resultType="long" parameterType="java.lang.Long" >
+    SELECT 
+    p.mem_id
+    FROM ps_member_pet p
+    WHERE p.PET_ID = #{petId,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM ps_pet p
+  </select>
+  
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM ps_member_pet pm,ps_pet p
+    WHERE pm.PET_ID=p.ID AND pm.MEM_ID = #{id,jdbcType=BIGINT}
+    <if test="limit != null and offset != null" >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER}
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT count(1) FROM ps_pet p
+    <if test="limit != null and offset != null" >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER}
+    </if>
+  </select>
+</mapper>

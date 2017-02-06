@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.petstore.camera.persistence.mapper.CameraMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.petstore.camera.entity.Camera" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="IP" property="IP" jdbcType="VARCHAR" />
+    <result column="PORT" property="port" jdbcType="INTEGER" />
+    <result column="AUTH_USERNAME" property="auth_username" jdbcType="VARCHAR" />
+    <result column="AUTH_PASSWORD" property="auth_password" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="ENABLE" property="enable" jdbcType="BIT" />
+    <result column="CAGE" property="cage" jdbcType="VARCHAR" />
+  	<result column="BINDING" property="binding"	jdbcType="BIT" />
+    
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    c.ID as ID, c.NAME as NAME, c.IP as IP, c.PORT as PORT, 
+    c.AUTH_USERNAME as AUTH_USERNAME, c.AUTH_PASSWORD as AUTH_PASSWORD, c.DESCRIPTION as DESCRIPTION, 
+    c.ENABLE as ENABLE,c.CAGE as CAGE,c.BINDING as BINDING ,c.CREATE_TIME as CREATE_TIME, c.UPDATE_TIME as UPDATE_TIME,
+    c.CREATE_BY as CREATE_BY, c.UPDATE_BY as UPDATE_BY
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.petstore.camera.entity.Camera" >
+    INSERT INTO ps_camera (NAME, IP, PORT, AUTH_USERNAME, AUTH_PASSWORD, DESCRIPTION, 
+        ENABLE,CAGE,BINDING, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY)
+    VALUES (#{name,jdbcType=VARCHAR},#{IP,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER},
+            #{auth_username,jdbcType=VARCHAR},#{auth_password,jdbcType=VARCHAR},#{description,jdbcType=VARCHAR},
+            #{enable,jdbcType=BIT},#{cage,jdbcType=VARCHAR},#{binding,jdbcType=BIT},#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP},
+            #{createBy,jdbcType=BIGINT}, #{updateBy,jdbcType=BIGINT})
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM ps_camera
+    WHERE id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.petstore.camera.entity.Camera" >
+    UPDATE ps_camera
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="IP != null" >
+        IP = #{IP,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        PORT = #{port,jdbcType=INTEGER},
+      </if>
+      <if test="auth_username != null" >
+        AUTH_USERNAME = #{auth_username,jdbcType=VARCHAR},
+      </if>
+      <if test="auth_password != null" >
+        AUTH_PASSWORD = #{auth_password,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        ENABLE = #{enable,jdbcType=BIT},
+      </if>
+      <if test="cage != null" >
+        CAGE = #{cage,jdbcType=VARCHAR},
+      </if>
+      <if test="binding != null" >
+        BINDING = #{binding,jdbcType=BIT},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+      </if>
+    </set>
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM ps_camera c
+    WHERE c.id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="getCamera" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM ps_camera c
+  </select>
+  
+  <sql id="conditionSql">
+  <where>
+   <if test="name != null and name != ''">
+    c.NAME LIKE CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="IP != null and IP != ''">
+    and c.IP like CONCAT(CONCAT('%', #{IP,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="port != null and port != ''">
+    and c.PORT LIKE CONCAT(CONCAT('%', #{port,jdbcType=INTEGER}),'%')
+   </if>
+   <if test="description != null and description != ''">
+    and c.DESCRIPTION LIKE CONCAT(CONCAT('%', #{description,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="cage != null and cage != ''">
+    and c.CAGE LIKE CONCAT(CONCAT('%', #{cage,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="binding != null and binding != ''">
+    and c.BINDING = #{binding,jdbcType=BIT}
+   </if>
+   <if test="start_create_time != null and start_create_time != ''">
+    <![CDATA[ and DATE_FORMAT(c.CREATE_TIME,'%Y-%m-%d') >= DATE_FORMAT(#{start_create_time,jdbcType=TIMESTAMP},'%Y-%m-%d') ]]> 
+   </if>
+   <if test="end_create_time != null and end_create_time != ''">
+    <![CDATA[ and DATE_FORMAT(c.CREATE_TIME,'%Y-%m-%d') <= DATE_FORMAT(#{end_create_time,jdbcType=TIMESTAMP},'%Y-%m-%d') ]]>
+   </if>
+  </where>
+ </sql>
+  
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM ps_camera c
+    <include refid="conditionSql" />
+    <if test="limit != null and start != null">
+     LIMIT #{start, jdbcType=INTEGER},#{limit, jdbcType=INTEGER}
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT count(1) FROM ps_camera c
+    <include refid="conditionSql" />
+    <if test="limit != null and start != null">
+     LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER}
+    </if>
+  </select>
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.message.persistence.mapper.MemberMessageMapper">
+ <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.message.entity.Message">
+  <id column="MSG_ID" property="id" jdbcType="BIGINT" />
+  <result column="MSG_TITLE" property="title" jdbcType="VARCHAR" />
+  <result column="MSG_MESSAGE" property="message" jdbcType="LONGVARCHAR" />
+  <result column="MSG_TYPE" property="type" jdbcType="VARCHAR" />
+  <result column="MSG_SEND_TIME" property="send_time" jdbcType="TIMESTAMP" />
+
+  <result column="MSG_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+  <result column="MSG_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  <result column="MSG_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+  <result column="MSG_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+ </resultMap>
+
+ <sql id="Base_Column_List">
+  m.ID as MSG_ID, m.TITLE as MSG_TITLE, m.MESSAGE as MSG_MESSAGE, m.TYPE as MSG_TYPE,
+  m.SEND_TIME as MSG_SEND_TIME,
+  m.CREATE_TIME as MSG_CREATE_TIME, m.UPDATE_TIME as MSG_UPDATE_TIME,
+  m.CREATE_BY as MSG_CREATE_BY, m.UPDATE_BY as MSG_UPDATE_BY
+ </sql>
+
+ <!-- 插入单条数据 -->
+ <insert id="save" parameterType="cn.cooperlink.ecplatform.message.entity.MemberMessage"
+  useGeneratedKeys="true" keyProperty="id">
+  INSERT INTO msg_member_message (MEM_ID, MSG_ID)
+  VALUES (#{mem_id,jdbcType=BIGINT}, #{msg_id,jdbcType=BIGINT})
+ </insert>
+
+ <!-- 批量插入 -->
+ <insert id="saveBatch" parameterType="java.util.List" >
+    INSERT INTO msg_member_message (MEM_ID, MSG_ID)
+    VALUES 
+    <foreach collection="list" separator="," item="item">
+    (
+      (#{item.mem_id,jdbcType=BIGINT}, #{item.msg_id,jdbcType=BIGINT})
+    )
+    </foreach>
+  </insert>
+
+ <!-- 删除数据 -->
+ <delete id="delete" parameterType="java.lang.Long">
+  DELETE FROM msg_member_message
+  WHERE ID = #{id,jdbcType=BIGINT}
+ </delete>
+ 
+ <!-- 批量删除 -->
+ <delete id="deleteBatch" parameterType="java.util.List" >
+    DELETE FROM msg_member_message WHERE ID IN
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+        #{item}   
+    </foreach> 
+  </delete>
+
+ <!-- 查询我的消息列表 -->
+ <select id="getMyMessage" resultMap="BaseResultMap">
+  SELECT
+  <include refid="Base_Column_List" />
+  FROM msg_member_message mm,msg_message m
+  WHERE mm.MSG_ID=m.ID and mm.MEM_ID = #{id,jdbcType=BIGINT}
+  and m.SEND_TIME>=#{timestamp,jdbcType=TIMESTAMP}
+ </select>
+ 
+  <!-- 根据消息ID查询消息关系列表 -->
+ <select id="getMemberMessageByMsgId" resultType="map">
+  SELECT
+   mm.ID as id,
+   mm.MEM_ID as mem_id,
+   mm.MSG_ID as msg_id
+  FROM msg_member_message mm
+  WHERE mm.MSG_ID = #{id,jdbcType=BIGINT}
+ </select>
+
+ <!-- 统计记录数 -->
+ <select id="count" resultType="long" parameterType="map">
+  select count(1) from msg_message m
+ </select>
+</mapper>

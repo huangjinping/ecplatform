@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.member.persistence.mapper.SubMemberMapper">
+ <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.member.entity.SubMember">
+  <id column="MS_ID" property="id" jdbcType="BIGINT" />
+  <result column="MS_NAME" property="name" jdbcType="VARCHAR" />
+  <result column="MS_MOBILE" property="mobile" jdbcType="VARCHAR" />
+  <result column="MS_GENDER" property="gender" jdbcType="BIT" />
+  <result column="MS_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+  <result column="MS_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  <result column="MS_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+  <result column="MS_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+ </resultMap>
+
+ <sql id="Base_Column_List">
+  m.ID as MS_ID, m.NAME as MS_NAME, m.MOBILE as MS_MOBILE,
+  m.GENDER as MS_GENDER,
+  m.CREATE_TIME as MS_CREATE_TIME, m.UPDATE_TIME as MS_UPDATE_TIME,
+  m.CREATE_BY as MS_CREATE_BY, m.UPDATE_BY as MS_UPDATE_BY
+ </sql>
+
+ <!-- 插入单条数据 -->
+ <insert id="save" parameterType="cn.cooperlink.ecplatform.member.entity.SubMember">
+  INSERT INTO mem_submember (NAME, MOBILE, PASSWD, GENDER, P_MEM_ID,
+  CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY)
+  VALUES (#{name,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR},
+  #{passwd,jdbcType=VARCHAR},#{gender,jdbcType=BIT},#{p_mem_id,jdbcType=BIGINT},
+  #{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP},
+  #{createBy,jdbcType=BIGINT}, #{updateBy,jdbcType=BIGINT})
+ </insert>
+
+ <!-- 删除数据 -->
+ <delete id="delete" parameterType="java.lang.Long">
+  DELETE FROM mem_submember
+  WHERE id = #{id,jdbcType=BIGINT}
+ </delete>
+
+ <!-- 修改数据 -->
+ <update id="update" parameterType="cn.cooperlink.ecplatform.member.entity.SubMember">
+  UPDATE mem_submember
+  <set>
+   <if test="name != null">
+    NAME = #{name,jdbcType=VARCHAR},
+   </if>
+   <if test="mobile != null">
+    MOBILE = #{mobile,jdbcType=VARCHAR},
+   </if>
+   <if test="passwd != null">
+    PASSWD = #{passwd,jdbcType=VARCHAR},
+   </if>
+   <if test="gender != null">
+    GENDER = #{gender,jdbcType=BIT},
+   </if>
+   <if test="enable != null">
+    ENABLE = #{enable,jdbcType=BIT},
+   </if>
+   <if test="updateTime != null">
+    UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+   </if>
+   <if test="updateBy != null">
+    UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+   </if>
+  </set>
+  WHERE ID = #{id,jdbcType=BIGINT}
+ </update>
+
+ <!-- 查询单条数据 -->
+ <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long">
+  SELECT
+  <include refid="Base_Column_List" />
+  FROM mem_submember m
+  WHERE m.ID = #{id,jdbcType=BIGINT}
+ </select>
+ 
+  <select id="findByMobile" resultMap="BaseResultMap" parameterType="java.lang.String">
+  SELECT
+   <include refid="Base_Column_List" />
+  FROM mem_submember m
+  WHERE m.MOBILE = #{mobile,jdbcType=VARCHAR}
+ </select>
+
+ <!-- 查询所有 -->
+ <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.String">
+  SELECT
+  <include refid="Base_Column_List" />
+  FROM mem_submember m
+ </select>
+
+ <sql id="conditionSql">
+  <where>
+   <if test="name != null and name != ''">
+    m.NAME LIKE CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="mobile != null and mobile != ''">
+    and m.MOBILE LIKE CONCAT(CONCAT('%', #{mobile,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="gender != null">
+    and m.GENDER = #{gender,jdbcType=BIT}
+   </if>
+   <if test="enable != null">
+    and m.ENABLE = #{enable,jdbcType=BIT}
+   </if>
+   <if test="p_mem_id != null">
+    and m.P_MEM_ID = #{p_mem_id,jdbcType=BIGINT}
+   </if>
+  </where>
+ </sql>
+
+ <!-- 条件查询 -->
+ <select id="findByCondition" resultMap="BaseResultMap" parameterType="map">
+  SELECT
+  <include refid="Base_Column_List" />
+  FROM mem_submember m
+  <include refid="conditionSql"/>
+  <if test="limit != null and start != null">
+   LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER}
+  </if>
+ </select>
+
+ <!-- 统计记录数 -->
+ <select id="count" resultType="long" parameterType="map">
+  SELECT count(1) FROM mem_submember m
+  <include refid="conditionSql"/>
+ </select>
+</mapper>

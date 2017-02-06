@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.common.persistence.mapper.CommonMapper" >
+  
+  <!-- 查找下一个排序号, 用于树结构排序 -->
+  <select id="nextSequence" parameterType="map" resultType="map">
+	SELECT 
+		(SELECT T.ORDER_FIELD FROM ${tableName} T WHERE 
+			<choose>
+				<when test="parentId == null || parentId == 0">
+					(T.ID = 0 OR T.ID IS NULL)
+				</when>
+				<otherwise>
+					T.ID = #{parentId, jdbcType=BIGINT}
+				</otherwise>
+			</choose>
+		) PARENT_SEQ, 
+		T2.TMAX SEL_SEQ 
+	FROM 
+		(
+		 SELECT 
+			MAX(T1.ORDER_FIELD) TMAX, 
+			MAX(T1.PARENT_ID) TPI 
+		 FROM 
+		 	${tableName} T1 
+		 WHERE 
+			<choose>
+				<when test="parentId == null || parentId == 0">
+					(T1.PARENT_ID = 0 OR T1.PARENT_ID IS NULL)
+				</when>
+				<otherwise>
+					T1.PARENT_ID = #{parentId, jdbcType=BIGINT}
+				</otherwise>
+			</choose>
+		) T2
+  </select>
+  
+  <!-- 更新子节点名称路径 -->
+  <update id="updateChildNamePath" parameterType="map">
+  	UPDATE ${tableName}
+	SET 
+		NAME_FULLPATH = 
+		CONCAT(
+			#{newNameFullpath}, 
+			SUBSTRING(NAME_FULLPATH, CHARACTER_LENGTH(CONCAT(#{oldNameFullpath}, '/')), CHARACTER_LENGTH(NAME_FULLPATH))
+		)
+	WHERE ID_FULLPATH LIKE '${idFullpath}/%' 
+	AND NAME_FULLPATH LIKE '${oldNameFullpath}/%'
+  </update>
+  
+  <!-- 根据某字段值统计记录数 -->
+  <select id="getCountByFieldVal" parameterType="map" resultType="long">
+		SELECT COUNT(*) FROM ${tableName} WHERE ${fieldName} = #{fieldValue}
+		<if test="id != null">
+			AND ID != #{id}
+		</if>
+	</select>
+  
+</mapper>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.message.persistence.mapper.MessageMapper">
+ <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.message.entity.Message">
+  <id column="MSG_ID" property="id" jdbcType="BIGINT" />
+  <result column="MSG_TITLE" property="title" jdbcType="VARCHAR" />
+  <result column="MSG_MESSAGE" property="message" jdbcType="LONGVARCHAR" />
+  <result column="MSG_TYPE" property="type" jdbcType="VARCHAR" />
+  <result column="MSG_SEND_TIME" property="send_time" jdbcType="TIMESTAMP" />
+
+  <result column="MSG_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+  <result column="MSG_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  <result column="MSG_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+  <result column="MSG_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+ </resultMap>
+
+ <sql id="Base_Column_List">
+  m.ID as MSG_ID, m.TITLE as MSG_TITLE, m.MESSAGE as MSG_MESSAGE, m.TYPE as MSG_TYPE,
+  m.SEND_TIME as MSG_SEND_TIME,
+  m.CREATE_TIME as MSG_CREATE_TIME, m.UPDATE_TIME as MSG_UPDATE_TIME,
+  m.CREATE_BY as MSG_CREATE_BY, m.UPDATE_BY as MSG_UPDATE_BY
+ </sql>
+
+ <!-- 插入单条数据 -->
+ <insert id="save" parameterType="cn.cooperlink.ecplatform.message.entity.Message"
+  useGeneratedKeys="true" keyProperty="id">
+  INSERT INTO msg_message (TITLE, MESSAGE, TYPE, SEND_TIME, CREATE_TIME, UPDATE_TIME, CREATE_BY,
+  UPDATE_BY)
+  VALUES (#{title,jdbcType=VARCHAR},#{message,jdbcType=LONGVARCHAR}, #{type,jdbcType=VARCHAR},
+  #{send_time,jdbcType=TIMESTAMP},
+  #{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP},
+  #{createBy,jdbcType=BIGINT}, #{updateBy,jdbcType=BIGINT})
+ </insert>
+
+ <!-- 删除数据 -->
+ <delete id="delete" parameterType="java.lang.Long">
+  DELETE FROM msg_message
+  WHERE ID = #{id,jdbcType=BIGINT}
+ </delete>
+
+ <!-- 修改数据 -->
+ <update id="update" parameterType="cn.cooperlink.ecplatform.message.entity.Message">
+  UPDATE msg_message
+  <set>
+   <if test="title != null">
+    TITLE = #{title,jdbcType=VARCHAR},
+   </if>
+   <if test="message != null">
+    MESSAGE = #{message,jdbcType=LONGVARCHAR},
+   </if>
+   <if test="type != null">
+    TYPE = #{type,jdbcType=VARCHAR},
+   </if>
+   <if test="auth_password != null">
+    SEND_TIME = #{send_time,jdbcType=TIMESTAMP},
+   </if>
+   <if test="updateTime != null">
+    UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+   </if>
+   <if test="updateBy != null">
+    UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+   </if>
+  </set>
+  WHERE ID = #{id,jdbcType=BIGINT}
+ </update>
+
+ <!-- 查询单条数据 -->
+ <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long">
+  SELECT
+  <include refid="Base_Column_List" />
+  FROM msg_message m
+  WHERE m.ID = #{id,jdbcType=BIGINT}
+ </select>
+
+ <!-- 查询所有 -->
+ <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.String">
+  SELECT
+  <include refid="Base_Column_List" />
+  FROM msg_message m
+ </select>
+
+ <sql id="conditionSql">
+  <where>
+   <if test="title != null and title != ''">
+    m.TITLE LIKE CONCAT(CONCAT('%', #{title,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="message != null and message != ''">
+    and m.MESSAGE like CONCAT(CONCAT('%', #{message,jdbcType=VARCHAR}),'%')
+   </if>
+   <if test="type != null and type != ''">
+    and m.TYPE=#{type,jdbcType=VARCHAR}
+   </if>
+   <if test="start_send_time != null and start_send_time != ''">
+    <![CDATA[ and DATE_FORMAT(m.SEND_TIME,'%Y-%m-%d') >= DATE_FORMAT(#{start_send_time,jdbcType=TIMESTAMP},'%Y-%m-%d') ]]> 
+   </if>
+   <if test="end_send_time != null and end_send_time != ''">
+    <![CDATA[ and DATE_FORMAT(m.SEND_TIME,'%Y-%m-%d') <= DATE_FORMAT(#{end_send_time,jdbcType=TIMESTAMP},'%Y-%m-%d') ]]>
+   </if>
+  </where>
+ </sql>
+
+ <!-- 条件查询 -->
+ <select id="findByCondition" resultMap="BaseResultMap" parameterType="map">
+  select
+  <include refid="Base_Column_List" />
+  from msg_message m
+  <include refid="conditionSql" />
+  <if test="limit != null and start != null">
+   LIMIT #{start,javaType=int, jdbcType=INTEGER}, #{limit,javaType=int, jdbcType=INTEGER}
+  </if>
+ </select>
+
+ <!-- 统计记录数 -->
+ <select id="count" resultType="long" parameterType="map">
+  select count(1) from msg_message m
+  <include refid="conditionSql" />
+  <if test="limit != null and start != null">
+   LIMIT #{start,javaType=int, jdbcType=INTEGER}, #{limit,javaType=int, jdbcType=INTEGER}
+  </if>
+ </select>
+</mapper>

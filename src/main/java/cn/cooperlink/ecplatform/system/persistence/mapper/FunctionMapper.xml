@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.system.persistence.mapper.FunctionMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.system.entity.Function" >
+    <id column="F_ID" property="id" jdbcType="BIGINT" />
+    <result column="F_PARENT_ID" property="parentId" jdbcType="BIGINT" />
+    <result column="F_FUNC_NAME" property="funcName" jdbcType="VARCHAR" />
+    <result column="F_FUNC_CODE" property="funcCode" jdbcType="VARCHAR" />
+    <result column="F_URL" property="url" jdbcType="VARCHAR" />
+    <result column="F_ICON_CLS" property="iconCls" jdbcType="VARCHAR" />
+    <result column="F_IS_BUILD_IN" property="isBuildIn" jdbcType="INTEGER" />
+    <result column="F_ORDER_FIELD" property="orderField" jdbcType="VARCHAR" />
+    <result column="F_TYPE" property="type" jdbcType="INTEGER" />
+    <result column="F_ID_FULLPATH" property="idFullpath" jdbcType="VARCHAR" />
+    <result column="F_NAME_FULLPATH" property="nameFullpath" jdbcType="VARCHAR" />
+    <result column="F_VALIDITY" property="validity" jdbcType="INTEGER" />
+    <result column="F_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="F_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="F_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+    <result column="F_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    F.ID as F_ID, F.PARENT_ID as F_PARENT_ID, F.FUNC_NAME as F_FUNC_NAME, F.FUNC_CODE as F_FUNC_CODE, 
+    F.URL as F_URL, F.ICON_CLS as F_ICON_CLS, F.IS_BUILD_IN as F_IS_BUILD_IN, F.ORDER_FIELD as F_ORDER_FIELD, 
+    F.TYPE as F_TYPE, F.VALIDITY as F_VALIDITY, F.CREATE_BY as F_CREATE_BY, F.CREATE_TIME as F_CREATE_TIME, 
+    F.UPDATE_BY as F_UPDATE_BY, F.UPDATE_TIME as F_UPDATE_TIME,
+    F.ID_FULLPATH as F_ID_FULLPATH, F.NAME_FULLPATH as F_NAME_FULLPATH
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.system.entity.Function" 
+  	useGeneratedKeys="true" keyProperty="id">
+    insert into dictionary_function (ID, PARENT_ID, FUNC_NAME, 
+      FUNC_CODE, URL, ICON_CLS, 
+      IS_BUILD_IN, ORDER_FIELD, TYPE, ID_FULLPATH, NAME_FULLPATH,
+      VALIDITY, CREATE_BY, CREATE_TIME, 
+      UPDATE_BY, UPDATE_TIME)
+    values (#{id,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{funcName,jdbcType=VARCHAR}, 
+      #{funcCode,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{iconCls,jdbcType=VARCHAR}, 
+      #{isBuildIn,jdbcType=INTEGER}, #{orderField,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
+      #{idFullpath,jdbcType=VARCHAR}, #{nameFullpath,jdbcType=VARCHAR},
+      #{validity,jdbcType=INTEGER}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM DICTIONARY_FUNCTION
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.system.entity.Function" >
+    UPDATE DICTIONARY_FUNCTION
+    <set>
+      <if test="parentId != null" >
+        PARENT_ID = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="funcName != null" >
+        FUNC_NAME = #{funcName,jdbcType=VARCHAR},
+      </if>
+      <if test="funcCode != null" >
+        FUNC_CODE = #{funcCode,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        URL = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="iconCls != null" >
+        ICON_CLS = #{iconCls,jdbcType=VARCHAR},
+      </if>
+      <if test="isBuildIn != null" >
+        IS_BUILD_IN = #{isBuildIn,jdbcType=INTEGER},
+      </if>
+      <if test="orderField != null" >
+        ORDER_FIELD = #{orderField,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="idFullpath != null" >
+        ID_FULLPATH = #{idFullpath, jdbcType=VARCHAR},
+      </if>
+      <if test="nameFullpath != null" >
+        NAME_FULLPATH = #{nameFullpath,jdbcType=VARCHAR},
+      </if>
+      <if test="validity != null" >
+        VALIDITY = #{validity,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM 
+    	DICTIONARY_FUNCTION F
+    WHERE F.ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM
+    	DICTIONARY_FUNCTION F
+    ORDER BY ORDER_FIELD ASC
+  </select>
+  
+  <sql id="where">
+    <if test="funcName != null" >
+    	WHERE F.FUNC_NAME LIKE CONCAT('%',#{funcName,jdbcType=VARCHAR},'%')
+    </if>
+  </sql>
+  
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM DICTIONARY_FUNCTION F
+    <include refid="where"/>
+    ORDER BY ORDER_FIELD ASC
+    <if test="limit != null and start != null" >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER} 
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT COUNT(*) FROM DICTIONARY_FUNCTION F
+    <include refid="where"/>
+  </select>
+  
+  <!-- 删除被购买的所有服务 -->
+  <delete id="deleteSvrPurchaseByFunc" parameterType="java.lang.Long">
+  	DELETE FROM TEN_SERVICE_PURCHASE
+    WHERE FUNC_ID = #{funcId,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 删除已授权的所有功能 -->
+  <delete id="deleteRoleFuncByFunc" parameterType="java.lang.Long">
+  	DELETE FROM SYS_ROLE_FUNC
+    WHERE FUNC_ID = #{funcId,jdbcType=BIGINT}
+  </delete>
+  
+  <select id="findAllCatalog" resultMap="BaseResultMap">
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM
+    	DICTIONARY_FUNCTION F
+    WHERE F.VALIDITY = 1 AND F.TYPE &lt; 3
+    ORDER BY ORDER_FIELD ASC
+  </select>
+  
+</mapper>

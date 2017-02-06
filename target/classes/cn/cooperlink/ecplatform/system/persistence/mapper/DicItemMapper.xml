@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.system.persistence.mapper.DicItemMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.system.entity.DicItem" >
+    <id column="DI_ID" property="id" jdbcType="BIGINT" />
+    <result column="DI_PARENT_ID" property="parentId" jdbcType="BIGINT" />
+    <result column="DI_ITEM_VALUE" property="itemValue" jdbcType="VARCHAR" />
+    <result column="DI_DISPLAY_NAME" property="displayName" jdbcType="VARCHAR" />
+    <result column="DI_DIR_ID" property="dirId" jdbcType="BIGINT" />
+    <result column="DI_ID_FULLPATH" property="idFullpath" jdbcType="VARCHAR" />
+    <result column="DI_ORDER_FIELD" property="orderField" jdbcType="INTEGER" />
+    <result column="DI_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="DI_TENANT_ID" property="tenantId" jdbcType="BIGINT" />
+    <result column="DI_VALIDITY" property="validity" jdbcType="INTEGER" />
+    <result column="DI_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="DI_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="DI_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+    <result column="DI_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="DI_NAME_FULLPATH" property="nameFullpath" jdbcType="VARCHAR" />
+    <result column="DI_ICON_CLS" property="iconCls" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    DI.ID AS DI_ID, DI.PARENT_ID AS DI_PARENT_ID, DI.ITEM_VALUE AS DI_ITEM_VALUE, DI.DISPLAY_NAME AS DI_DISPLAY_NAME, 
+    DI.DIR_ID AS DI_DIR_ID, DI.ID_FULLPATH AS DI_ID_FULLPATH, DI.ORDER_FIELD AS DI_ORDER_FIELD, 
+    DI.DESCRIPTION AS DI_DESCRIPTION, DI.TENANT_ID AS DI_TENANT_ID, DI.VALIDITY AS DI_VALIDITY, 
+    DI.CREATE_BY AS DI_CREATE_BY, DI.CREATE_TIME AS DI_CREATE_TIME, DI.UPDATE_BY AS DI_UPDATE_BY, 
+    DI.UPDATE_TIME AS DI_UPDATE_TIME, DI.NAME_FULLPATH AS DI_NAME_FULLPATH, DI.ICON_CLS AS DI_ICON_CLS
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.system.entity.DicItem" 
+  	useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO DICTIONARY_DIC_ITEM (ID, PARENT_ID, ITEM_VALUE, 
+      DISPLAY_NAME, DIR_ID, ID_FULLPATH, NAME_FULLPATH,
+      ORDER_FIELD, DESCRIPTION, TENANT_ID, 
+      VALIDITY, CREATE_BY, CREATE_TIME, 
+      UPDATE_BY, UPDATE_TIME, ICON_CLS)
+    VALUES (#{id,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{itemValue,jdbcType=VARCHAR}, 
+      #{displayName,jdbcType=VARCHAR}, #{dirId,jdbcType=BIGINT}, #{idFullpath,jdbcType=VARCHAR}, #{nameFullpath, jdbcType=VARCHAR},
+      #{orderField,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, #{tenantId,jdbcType=BIGINT}, 
+      #{validity,jdbcType=INTEGER}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, #{iconCls,jdbcType=VARCHAR})
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM DICTIONARY_DIC_ITEM
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.system.entity.DicItem" >
+    UPDATE DICTIONARY_DIC_ITEM
+    <set >
+      <if test="parentId != null" >
+        PARENT_ID = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="itemValue != null" >
+        ITEM_VALUE = #{itemValue,jdbcType=VARCHAR},
+      </if>
+      <if test="displayName != null" >
+        DISPLAY_NAME = #{displayName,jdbcType=VARCHAR},
+      </if>
+      <if test="dirId != null" >
+        DIR_ID = #{dirId,jdbcType=BIGINT},
+      </if>
+      <if test="idFullpath != null" >
+        ID_FULLPATH = #{idFullpath,jdbcType=VARCHAR},
+      </if>
+      <if test="nameFullpath != null" >
+        NAME_FULLPATH = #{nameFullpath,jdbcType=VARCHAR},
+      </if>
+      <if test="orderField != null" >
+        ORDER_FIELD = #{orderField,jdbcType=INTEGER},
+      </if>
+      <if test="iconCls != null" >
+        ICON_CLS = #{iconCls,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantId != null" >
+        TENANT_ID = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="validity != null" >
+        VALIDITY = #{validity,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM DICTIONARY_DIC_ITEM DI
+    WHERE DI.ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM DICTIONARY_DIC_ITEM DI
+    WHERE DI.DIR_ID = #{dirId, jdbcType=BIGINT}
+  </select>
+  
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM DICTIONARY_DIC_ITEM DI
+    WHERE DI.DIR_ID = #{dirId, jdbcType=BIGINT}
+    <if test="displayName != null">
+    	AND DI.DISPLAY_NAME LIKE CONCAT('%',#{displayName, jdbcType=VARCHAR} ,'%')
+    </if>
+    <if test="limit != null and start != null" >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER} 
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT COUNT(1) FROM DICTIONARY_DIC_ITEM DI
+    WHERE DI.DIR_ID = #{dirId, jdbcType=BIGINT}
+  </select>
+</mapper>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cooperlink.ecplatform.system.persistence.mapper.DicDefinitionMapper" >
+  <resultMap id="BaseResultMap" type="cn.cooperlink.ecplatform.system.entity.DicDefinition" >
+    <id column="DD_ID" property="id" jdbcType="BIGINT" />
+    <result column="DD_CODE" property="code" jdbcType="VARCHAR" />
+    <result column="DD_NAME" property="name" jdbcType="VARCHAR" />
+    <result column="DD_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="DD_HIERARCHIES" property="hierarchies" jdbcType="INTEGER" />
+    <result column="DD_SCOPE" property="scope" jdbcType="INTEGER" />
+    <result column="DD_FLAG" property="flag" jdbcType="INTEGER" />
+    <result column="DD_VALIDITY" property="validity" jdbcType="INTEGER" />
+    <result column="DD_CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="DD_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="DD_UPDATE_BY" property="updateBy" jdbcType="BIGINT" />
+    <result column="DD_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    DD.ID AS DD_ID, DD.CODE AS DD_CODE, DD.NAME AS DD_NAME, DD.DESCRIPTION AS DD_DESCRIPTION, 
+    DD.HIERARCHIES AS DD_HIERARCHIES, DD.SCOPE AS DD_SCOPE, DD.FLAG AS DD_FLAG, DD.VALIDITY AS DD_VALIDITY, 
+    DD.CREATE_BY AS DD_CREATE_BY, DD.CREATE_TIME AS DD_CREATE_TIME, DD.UPDATE_BY AS DD_UPDATE_BY, 
+    DD.UPDATE_TIME AS DD_UPDATE_TIME
+  </sql>
+  
+  <!-- 插入单条数据 -->
+  <insert id="save" parameterType="cn.cooperlink.ecplatform.system.entity.DicDefinition" >
+    INSERT INTO DICTIONARY_DIC_DEFINITION (ID, CODE, NAME, 
+      DESCRIPTION, HIERARCHIES, SCOPE, 
+      FLAG, VALIDITY, CREATE_BY, 
+      CREATE_TIME, UPDATE_BY, UPDATE_TIME
+      )
+    VALUES (#{id,jdbcType=BIGINT}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{hierarchies,jdbcType=INTEGER}, #{scope,jdbcType=INTEGER}, 
+      #{flag,jdbcType=INTEGER}, #{validity,jdbcType=INTEGER}, #{createBy,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.Long" >
+    DELETE FROM DICTIONARY_DIC_DEFINITION
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 修改数据 -->
+  <update id="update" parameterType="cn.cooperlink.ecplatform.system.entity.DicDefinition" >
+    UPDATE DICTIONARY_DIC_DEFINITION
+    <set >
+      <if test="code != null" >
+        CODE = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="hierarchies != null" >
+        HIERARCHIES = #{hierarchies,jdbcType=INTEGER},
+      </if>
+      <if test="scope != null" >
+        SCOPE = #{scope,jdbcType=INTEGER},
+      </if>
+      <if test="flag != null" >
+        FLAG = #{flag,jdbcType=INTEGER},
+      </if>
+      <if test="validity != null" >
+        VALIDITY = #{validity,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询单条数据 -->
+  <select id="getSingle" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM DICTIONARY_DIC_DEFINITION DD
+    WHERE DD.ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查询所有 -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM DICTIONARY_DIC_DEFINITION DD
+  </select>
+  
+  <sql id="where">
+    WHERE DD.VALIDITY = 1 
+    <if test="scope != null">
+    	AND DD.SCOPE = #{scope, jdbcType=INTEGER}
+    </if>
+  	<if test="qParam != null and qParam != ''">
+  		AND (DD.CODE LIKE CONCAT('%',#{qParam, jdbcType=VARCHAR},'%')
+  		OR DD.NAME LIKE CONCAT('%',#{qParam, jdbcType=VARCHAR},'%'))
+  	</if>
+  </sql>
+  
+  <!-- 条件查询 -->
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM DICTIONARY_DIC_DEFINITION DD
+    <include refid="where"/>
+    <if test="limit != null and start != null" >
+       LIMIT #{start, jdbcType=INTEGER}, #{limit, jdbcType=INTEGER} 
+    </if>
+  </select>
+  
+  <!-- 统计记录数 -->
+  <select id="count" resultType="long" parameterType="map" >
+    SELECT COUNT(1) FROM DICTIONARY_DIC_DEFINITION DD
+    <include refid="where"/>
+  </select>
+</mapper>
